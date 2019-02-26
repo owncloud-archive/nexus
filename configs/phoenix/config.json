@@ -1,0 +1,14 @@
+{
+  "server" : "https://owncloud.localhost:8443/reva/ocdav",
+  "theme": "owncloud",
+  "version": "0.1.0",
+  "auth": {
+    "clientId": "ownCloud",
+    "metaDataUrl": "https://owncloud.localhost:8443/.well-known/openid-configuration",
+    "url": "https://owncloud.localhost:8443/reva/ocdav"
+  },
+  "apps" : [
+    "files", "markdown-editor","pdf-viewer"
+  ]
+}
+

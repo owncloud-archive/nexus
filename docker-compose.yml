@@ -1,0 +1,93 @@
+version: '2'
+services:
+
+  # Identity source
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    command: --copy-service
+    environment:
+      LDAP_ORGANISATION: "ownCloud GmbH."
+      LDAP_DOMAIN: "owncloudqa.com"
+      LDAP_BASE_DN: "dc=owncloudqa,dc=com"
+      LDAP_TLS_CIPHER_SUITE: "NORMAL"
+      LDAP_TLS_VERIFY_CLIENT: "allow"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+      - ./examples/ldap/base.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-base.ldif
+    networks:
+      - ocis
+    ports:
+      - "8389:389"
+
+  # IDP
+  konnectd:
+    image: kopano/konnectd:latest
+    container_name: konnectd
+    environment:
+      LDAP_URI: ldap://openldap:389
+      LDAP_BINDDN: "cn=admin,dc=owncloudqa,dc=com"
+      LDAP_BINDPW: "admin"
+      LDAP_BASEDN: "dc=owncloudqa,dc=com"
+      LDAP_SCOPE: sub
+      LDAP_LOGIN_ATTRIBUTE: uid
+      LDAP_EMAIL_ATTRIBUTE: mail
+      LDAP_NAME_ATTRIBUTE: displayName
+      LDAP_UUID_ATTRIBUTE: uidNumber
+      LDAP_UUID_ATTRIBUTE_TYPE: text
+      LDAP_FILTER: "(objectClass=*)"
+      IDENTIFIER_REGISTRATION_CONF: /etc/kopano/konnectd-identifier-registration.yaml
+    volumes:
+      - ./configs/kopano/identifier-registration.yaml:/etc/kopano/konnectd-identifier-registration.yaml:ro
+      - ./configs/ssl/private-key.pem:/run/secrets/konnectd_signing_private_key:ro
+      - ./configs/kopano/konnectd-encryption-secret.key:/run/secrets/konnectd_encryption_secret:ro
+    depends_on:
+    - openldap
+    command:
+      "konnectd serve --iss=https://owncloud.localhost:8443 --log-level=debug --identifier-registration-conf=/etc/kopano/konnectd-identifier-registration.yaml --signing-private-key=/run/secrets/konnectd_signing_private_key --signing-method RS256 ldap"
+    networks:
+      - ocis
+
+  # owncloud frontend
+  phoenix:
+    build:
+      context: ./build/phoenix
+      dockerfile: Dockerfile
+    container_name: phoenix
+    volumes:
+       - ./configs/phoenix/config.json:/app/config.json:ro
+    command: yarn run watch --allowed-hosts owncloud.localhost --host 0.0.0.0
+    networks:
+      - ocis
+
+  # The meat of it
+  reva:
+    build:
+      context: ./build/reva
+      dockerfile: Dockerfile
+    container_name: reva
+    volumes:
+      - ./configs/reva/revad.toml:/etc/revad/revad.toml
+      - ./examples/data:/data
+    networks:
+      - ocis
+
+  # Overall proxy for all http requests
+  caddy:
+    image: abiosoft/caddy:no-stats
+    container_name: caddy
+    volumes:
+      - ./configs/Caddyfile:/etc/Caddyfile
+    ports:
+      - "8443:8443"
+    networks:
+      ocis:
+        aliases:
+          - owncloud.localhost
+
+networks:
+  ocis:
