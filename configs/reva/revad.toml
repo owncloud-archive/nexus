@@ -5,6 +5,9 @@ max_cpus = "32"
 
 [http]
 enabled_services = ["prometheussvc", "ocdavsvc"]
+# TODO leaving out auth so we can at least see phoenix, see https://github.com/owncloud/nexus/issues/1
+#enabled_middlewares = ["log", "trace", "auth"]
+enabled_middlewares = ["log", "trace"]
 network = "tcp"
 address = "0.0.0.0:9998"
 
@@ -14,19 +17,99 @@ prefix = "metrics"
 [http.services.ocdavsvc]
 prefix = "ocdav"
 chunk_folder = "/var/tmp/owncloud/chunks"
-storageprovidersvc = "127.0.0.1:9999"
+storageprovidersvc = "localhost:9999"
+enable_cors = true
+
+[http.middlewares.trace]
+priority = 100
+header = "x-trace"
+
+[http.middlewares.log]
+priority = 200
+
+[http.middlewares.auth]
+priority = 300
+authsvc = "0.0.0.0:9999"
+credential_strategy = "basic"
+# FIXME the code in github.com/cernbox/reva/cmd/revad/svcs/httpsvcs/handlers/auth/credential/strategy/oidc/oidc.go is a leftover from an earlier experiment, see https://github.com/owncloud/nexus/issues/2
+#credential_strategy = "oidc"
+token_strategy = "header"
+token_writer = "header"
+token_manager = "jwt"
+
+[http.middlewares.cors]
+priority = 400
+
+[http.handlers.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+[http.handlers.auth.token_strategies.header]
+header = "X-Access-Token"
+
+[http.handlers.auth.token_writers.header]
+header = "X-Access-Token"
+
+
 
 [grpc]
 network = "tcp"
 address = "0.0.0.0:9999"
-enabled_services = ["storagebrokersvc"]
+access_log = "stderr"
+#tls_enabled = true
+#tls_cert = "/etc/gridsecurity/host.cert"
+#tls_key = "/etc/gridsecurity/host.key"
+enabled_services = ["authsvc", "storagebrokersvc", "storageprovidersvc"]
+# TODO we need to authenticate the cs3 calls
+enabled_interceptors = ["prometheus", "log", "trace"]
+
+[grpc.interceptors.recovery]
+priority = 0
+
+[grpc.interceptors.trace]
+priority = 100
+header = "x-trace"
+
+[grpc.interceptors.log]
+priority = 200
+
+[grpc.interceptors.prometheus]
+priority = 300
+
+[grpc.interceptors.auth]
+priority = 400
+header = "x-access-token"
+token_manager = "jwt"
+
+[grpc.interceptors.auth.methods]
+"/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
+
+[grpc.interceptors.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+
+[grpc.services.authsvc]
+auth_manager = "demo"
+# TODO works but needs user_manager implementation, see https://github.com/owncloud/nexus/issues/1
+#auth_manager = "ldap"
+token_manager = "jwt"
+user_manager = "demo"
+
+[grpc.services.authsvc.auth_managers.ldap]
+hostname = "openldap"
+port = 636
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
+
 
 [grpc.services.storagebrokersvc]
 driver = "static"
 
 [grpc.services.storagebrokersvc.static.rules]
-"/" = "127.0.0.1:9999"
-"123e4567-e89b-12d3-a456-426655440000" = "127.0.0.1:9999"
+"/" = "localhost:9999"
+"123e4567-e89b-12d3-a456-426655440000" = "localhost:9999"
+
 
 [grpc.services.storageprovidersvc]
 driver = "local"
@@ -41,23 +124,8 @@ mgm = "root://nowhere.org"
 root_uid = 0
 root_gid = 0
 
-[grpc.services.authsvc.auth_manager]
-driver = "ldap"
-
-[grpc.services.authsvc.auth_manager.ldap]
-hostname = "openldap"
-port = 636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
-
-[grpc.services.authsvc.token_manager]
-driver = "jwt"
-
-
-[grpc.services.authsvc.user_manager]
-driver = "demo"
+#[grpc.services.authsvc.token_manager]
+#driver = "jwt"
 
 # not implemented yet
 #[grpc.services.authsvc.user_manager.ldap]
