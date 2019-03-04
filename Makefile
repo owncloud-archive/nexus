@@ -35,7 +35,10 @@ reva-container: reva-src ##@reva Build a docker container for reva, the storage
 
 reva-src: build/reva/src ##@reva Get reva sources
 build/reva/src:
-	git clone git@github.com:cernbox/reva.git build/reva/src
+	git clone git@github.com:owncloud/reva.git build/reva/src 
+	cd build/reva/src; \
+	git checkout nexus; \
+	git remote add upstream git@github.com:cernbox/reva.git
 
 .PHONY: phoenix-container
 phoenix-container: phoenix-src ##@phoenix Build a docker container for phoenix, the web frontend

@@ -7,7 +7,7 @@ max_cpus = "32"
 enabled_services = ["prometheussvc", "ocdavsvc"]
 # TODO leaving out auth so we can at least see phoenix, see https://github.com/owncloud/nexus/issues/1
 #enabled_middlewares = ["log", "trace", "auth"]
-enabled_middlewares = ["log", "trace"]
+enabled_middlewares = ["log", "trace", "auth"]
 network = "tcp"
 address = "0.0.0.0:9998"
 
@@ -88,11 +88,11 @@ secret = "Pive-Fumkiu4"
 
 
 [grpc.services.authsvc]
-auth_manager = "demo"
+auth_manager = "ldap"
 # TODO works but needs user_manager implementation, see https://github.com/owncloud/nexus/issues/1
 #auth_manager = "ldap"
 token_manager = "jwt"
-user_manager = "demo"
+user_manager = "ldap"
 
 [grpc.services.authsvc.auth_managers.ldap]
 hostname = "openldap"
@@ -102,6 +102,13 @@ filter = "(&(objectclass=inetorgperson)(uid=%s))"
 bind_username = "cn=admin,dc=owncloudqa,dc=com"
 bind_password = "admin"
 
+[grpc.services.authsvc.user_managers.ldap]
+hostname = "openldap"
+port = 636
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
 
 [grpc.services.storagebrokersvc]
 driver = "static"
@@ -126,12 +133,3 @@ root_gid = 0
 
 #[grpc.services.authsvc.token_manager]
 #driver = "jwt"
-
-# not implemented yet
-#[grpc.services.authsvc.user_manager.ldap]
-#hostname = "openldap"
-#port = 636
-#base_dn = "dc=owncloudqa,dc=com"
-#filter = "(&(objectclass=inetorgperson)(uid=%s))"
-#bind_username = "cn=admin,dc=owncloudqa,dc=com"
-#bind_password = "admin"
