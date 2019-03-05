@@ -30,9 +30,9 @@ priority = 200
 [http.middlewares.auth]
 priority = 300
 authsvc = "0.0.0.0:9999"
-credential_strategy = "basic"
+#credential_strategy = "basic"
 # FIXME the code in github.com/cernbox/reva/cmd/revad/svcs/httpsvcs/handlers/auth/credential/strategy/oidc/oidc.go is a leftover from an earlier experiment, see https://github.com/owncloud/nexus/issues/2
-#credential_strategy = "oidc"
+credential_strategy = "oidc"
 token_strategy = "header"
 token_writer = "header"
 token_manager = "jwt"
@@ -88,7 +88,7 @@ secret = "Pive-Fumkiu4"
 
 
 [grpc.services.authsvc]
-auth_manager = "ldap"
+auth_manager = "oidc"
 # TODO works but needs user_manager implementation, see https://github.com/owncloud/nexus/issues/1
 #auth_manager = "ldap"
 token_manager = "jwt"
