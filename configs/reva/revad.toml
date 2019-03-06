@@ -15,7 +15,7 @@ address = "0.0.0.0:9998"
 prefix = "metrics"
 
 [http.services.ocdavsvc]
-prefix = "ocdav"
+prefix = ""
 chunk_folder = "/var/tmp/owncloud/chunks"
 storageprovidersvc = "localhost:9999"
 enable_cors = true

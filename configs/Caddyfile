@@ -21,18 +21,19 @@ owncloud.localhost:8443 {
 		transparent
 	}
 
-	proxy /reva/ocdav reva:9998 {
-		without /reva
-                transparent
-	}
-
 	proxy /phoenix/ phoenix:8300 {
 		without /phoenix
                 transparent
 	}
 
-    # redirect to phoenix
+    # redirect / to /phoenix
 	redir 307 {
 		if {path} is /
 		/phoenix/
+	}
+
+	proxy / reva:9998 {
+                transparent
+	}
+
 }
