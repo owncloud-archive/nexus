@@ -1,0 +1,14 @@
+version: '2'
+services:
+  storageprovidersvc:
+    build:
+      context: ../../build/reva
+      dockerfile: Dockerfile
+    container_name: storageprovidersvc
+    volumes:
+      - ../../configs/reva/storageprovider/local.toml:/etc/revad/revad.toml
+      - ../../examples/data:/data
+    networks:
+      - ocis
+networks:
+  ocis:

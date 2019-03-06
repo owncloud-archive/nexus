@@ -9,4 +9,4 @@ RUN yarn global add -D  webpack webpack-dev-server webpack-cli webpack-merge
 
 EXPOSE 8300
 
-RUN yarn install && yarn dist
+RUN yarn install && yarn dist && yarn 

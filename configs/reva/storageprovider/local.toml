@@ -1,0 +1,48 @@
+[core]
+log_file = "stderr"
+log_mode = "dev"
+max_cpus = "2"
+
+[grpc]
+network = "tcp"
+address = "0.0.0.0:9999"
+access_log = "stderr"
+#tls_enabled = true
+#tls_cert = "/etc/gridsecurity/host.cert"
+#tls_key = "/etc/gridsecurity/host.key"
+enabled_services = ["storageprovidersvc"]
+# TODO we need to authenticate the cs3 calls
+enabled_interceptors = ["auth", "log", "trace"]
+
+[grpc.interceptors.trace]
+priority = 100
+header = "x-trace"
+
+[grpc.interceptors.log]
+priority = 100
+
+[grpc.interceptors.auth]
+priority = 300
+# TODO grpc 'headers' are stored as google.golang.org/grpc/metadata ... needs better naming, this is too confusing
+# keys for grpc metadata are always lowercase, so interceptors headers need to use lowercase.
+header = "x-access-token"
+token_strategy = "header"
+token_manager = "jwt"
+
+[grpc.interceptors.auth.methods]
+"/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
+
+[grpc.interceptors.auth.token_strategies.header]
+# TODO not needed? would need to be lowerase anyway
+header = "X-Access-Token"
+
+[grpc.interceptors.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+[grpc.services.storageprovidersvc]
+driver = "eos"
+mount_path = "/"
+mount_id = "123e4567-e89b-12d3-a456-426655440000"
+
+[grpc.services.storageprovidersvc.drivers.local]
+root = "/data"

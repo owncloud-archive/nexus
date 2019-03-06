@@ -31,6 +31,7 @@ token_manager = "jwt"
 
 [grpc.interceptors.auth.methods]
 "/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/List" = true
 
 [grpc.interceptors.auth.token_strategies.header]
 # TODO not needed? would need to be lowerase anyway
@@ -40,14 +41,9 @@ header = "X-Access-Token"
 secret = "Pive-Fumkiu4"
 
 [grpc.services.storageprovidersvc]
-driver = "local"
+driver = "eos"
 mount_path = "/"
 mount_id = "123e4567-e89b-12d3-a456-426655440000"
 
-[grpc.services.storageprovidersvc.drivers.local]
-root = "/data"
-
-[grpc.services.storageprovidersvc.eos]
-mgm = "root://nowhere.org"
-root_uid = 0
-root_gid = 0
+[grpc.services.storageprovidersvc.drivers.eos]
+master_url = "root://eos-mgm-test.eoscluster.cern.ch"
