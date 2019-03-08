@@ -23,7 +23,9 @@ priority = 100
 
 [grpc.interceptors.auth]
 priority = 300
-header = "X-Access-Token"
+# TODO grpc 'headers' are stored as google.golang.org/grpc/metadata ... needs better naming, this is too confusing
+# keys for grpc metadata are always lowercase, so interceptors headers need to use lowercase.
+header = "x-access-token"
 token_strategy = "header"
 token_manager = "jwt"
 
@@ -31,6 +33,7 @@ token_manager = "jwt"
 "/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
 
 [grpc.interceptors.auth.token_strategies.header]
+# TODO not needed? would need to be lowerase anyway
 header = "X-Access-Token"
 
 [grpc.interceptors.auth.token_managers.jwt]
