@@ -32,7 +32,7 @@ owncloud.localhost:8443 {
 		/phoenix/
 	}
 
-	proxy / reva:9998 {
+	proxy / ocdavsvc:9998 {
                 transparent
 	}
 

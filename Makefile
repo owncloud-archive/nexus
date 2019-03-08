@@ -31,7 +31,9 @@ future: up ##@containers Start a development environment
 
 .PHONY: reva-container
 reva-container: reva-src ##@reva Build a docker container for reva, the storage
-	docker-compose build reva 
+	docker-compose build ocdavsvc
+	docker-compose build authsvc
+	docker-compose build storageprovidersvc
 
 reva-src: build/reva/src ##@reva Get reva sources
 build/reva/src:

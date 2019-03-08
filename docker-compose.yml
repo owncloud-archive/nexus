@@ -65,16 +65,47 @@ services:
       - ocis
 
   # The meat of it
-  reva:
+  ocdavsvc:
     build:
       context: ./build/reva
       dockerfile: Dockerfile
-    container_name: reva
+    container_name: ocdavsvc
     volumes:
-      - ./configs/reva/revad.toml:/etc/revad/revad.toml
+      - ./configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
+    networks:
+      - ocis
+      
+  authsvc:
+    build:
+      context: ./build/reva
+      dockerfile: Dockerfile
+    container_name: authsvc
+    volumes:
+      - ./configs/reva/authsvc.toml:/etc/revad/revad.toml
+    networks:
+      - ocis
+      
+  storageprovidersvc:
+    build:
+      context: ./build/reva
+      dockerfile: Dockerfile
+    container_name: storageprovidersvc
+    volumes:
+      - ./configs/reva/storageprovidersvc.toml:/etc/revad/revad.toml
       - ./examples/data:/data
     networks:
       - ocis
+
+#  reva:
+#    build:
+#      context: ./build/reva
+#      dockerfile: Dockerfile
+#    container_name: reva
+#    volumes:
+#      - ./configs/reva/revad.toml:/etc/revad/revad.toml
+#      - ./examples/data:/data
+#    networks:
+#      - ocis
 
   # Overall proxy for all http requests
   caddy:

@@ -1,7 +1,7 @@
 [core]
 log_file = "stderr"
 log_mode = "dev"
-max_cpus = "32"
+max_cpus = "2"
 
 [http]
 enabled_services = ["prometheussvc", "ocdavsvc"]
