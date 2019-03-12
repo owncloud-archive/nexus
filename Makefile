@@ -57,7 +57,12 @@ up: reva-container phoenix-container ##@containers docker-compose up all contain
 .PHONY: down
 down: ##@containers docker-compose down all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose down
-	
+
+
+.PHONY: litmus
+test-litmus: ##@tests run litmus tests - requires an instance with basic auth credential strategy
+	docker run -e LITMUS_URL="http://ocdavsvc:9998/remote.php/webdav/" -e LITMUS_USERNAME=aaliyah_abernathy -e LITMUS_PASSWORD=secret --network=nexus_ocis -v "$(pwd)"/litmus:/root owncloud/litmus
+
 .PHONY: clean
 clean: clean-containers clean-src ##@cleanup Cleanup sources and containers
 
