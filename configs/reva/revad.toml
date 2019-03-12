@@ -1,3 +1,4 @@
+# an example for all configs in one file, needs to be updated
 [core]
 log_file = "stderr"
 log_mode = "dev"

@@ -12,7 +12,6 @@ access_log = "stderr"
 #tls_cert = "/etc/gridsecurity/host.cert"
 #tls_key = "/etc/gridsecurity/host.key"
 enabled_services = ["authsvc"]
-# TODO we need to authenticate the cs3 calls
 enabled_interceptors = ["auth", "prometheus", "log", "trace"]
 
 
@@ -44,10 +43,10 @@ secret = "Pive-Fumkiu4"
 
 [grpc.services.authsvc]
 auth_manager = "oidc"
-# TODO works but needs user_manager implementation, see https://github.com/owncloud/nexus/issues/1
-#auth_manager = "ldap"
+#auth_manager = "ldap" # use this to test litmus
 token_manager = "jwt"
-user_manager = "ldap"
+user_manager = "oidc"
+#user_manager = "ldap" # use this to test litmus
 
 #[grpc.services.authsvc.token_managers]
 #driver = "jwt"
