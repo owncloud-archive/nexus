@@ -31,7 +31,20 @@ future: up ##@containers Start a development environment
 
 .PHONY: reva-container
 reva-container: reva-src ##@reva Build a docker container for reva, the storage
-	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml build ocdavsvc authsvc storageprovidersvc
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml build authsvc ocdavsvc storageprovidersvc
+
+.PHONY: reva-rebuild-auth
+reva-rebuild-auth: ##@reva Rebuild and restart the storage container without bringing down the nexus
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d --no-deps --build authsvc
+
+.PHONY: reva-rebuild-ocdav
+reva-rebuild-ocdav: ##@reva Rebuild and restart the storage container without bringing down the nexus
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d --no-deps --build ocdavsvc
+
+.PHONY: reva-rebuild-storage
+reva-rebuild-storage: ##@reva Rebuild and restart the storage container without bringing down the nexus
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d --no-deps --build storageprovidersvc
+
 
 reva-src: build/reva/src ##@reva Get reva sources
 build/reva/src:
