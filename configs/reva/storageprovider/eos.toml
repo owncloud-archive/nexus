@@ -30,8 +30,26 @@ token_strategy = "header"
 token_manager = "jwt"
 
 [grpc.interceptors.auth.methods]
+"/cs3.storageproviderv0alpha.StorageProviderService/CreateDirectory" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/Delete" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/Move" = true
 "/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
 "/cs3.storageproviderv0alpha.StorageProviderService/List" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/StartWriteSession" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/Write" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/FinishWriteSession" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/Read" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/ListVersions" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/ReadVersion" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/RestoreVersion" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/ListRecycle" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/RestoreRecycleItem" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/PurgeRecycle" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/SetACL" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/UpdateACL" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/UnsetACL" = true
+"/cs3.storageproviderv0alpha.StorageProviderService/GetQuota" = true
+
 
 [grpc.interceptors.auth.token_strategies.header]
 # TODO not needed? would need to be lowerase anyway
