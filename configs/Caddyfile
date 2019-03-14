@@ -21,7 +21,7 @@ owncloud.localhost:8443 {
 		transparent
 	}
 
-	proxy /phoenix/ phoenix:8300 {
+	proxy /phoenix/ phoenix:80 {
 		without /phoenix
                 transparent
 	}

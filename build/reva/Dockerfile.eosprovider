@@ -1,0 +1,19 @@
+# Build the reva code
+ARG GO_VERSION=1.11
+FROM golang:${GO_VERSION}
+#RUN apk add --no-cache --update alpine-sdk git ca-certificates gcc
+WORKDIR /src
+COPY ./src/go.mod ./src/go.sum ./
+RUN go mod download
+COPY ./src ./
+RUN CGO_ENABLE=0 cd cmd/revad && go build
+
+# Run the reva d contianer in a new image with eos binary / xrootd binary and auth tools
+FROM gitlab-registry.cern.ch/dss/eos:4.4.25
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
+# Install LDAP PAM Tools / auth
+RUN useradd aaliyah_adams -p secret -u 1500
+# Add the revad binary from build image
+COPY --from=0 /src/cmd/revad/revad /src/cmd/revad/revad
+#RUN yum install -y nss-pam-ldapd nscd
+CMD ["/src/cmd/revad/revad -c /etc/revad/revad.toml"]

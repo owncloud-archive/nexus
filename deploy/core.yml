@@ -18,11 +18,11 @@ services:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
       - /container/service/slapd/assets/certs/
-      - ./examples/ldap/base.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-base.ldif
-    networks:
-      - ocis
+      - ../examples/ldap/base.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-base.ldif
     ports:
       - "8389:389"
+    networks:
+      - ocis
 
   # IDP
   konnectd:
@@ -42,9 +42,9 @@ services:
       LDAP_FILTER: "(objectClass=*)"
       IDENTIFIER_REGISTRATION_CONF: /etc/kopano/konnectd-identifier-registration.yaml
     volumes:
-      - ./configs/kopano/identifier-registration.yaml:/etc/kopano/konnectd-identifier-registration.yaml:ro
-      - ./configs/ssl/private-key.pem:/run/secrets/konnectd_signing_private_key:ro
-      - ./configs/kopano/konnectd-encryption-secret.key:/run/secrets/konnectd_encryption_secret:ro
+      - ../configs/kopano/identifier-registration.yaml:/etc/kopano/konnectd-identifier-registration.yaml:ro
+      - ../configs/ssl/private-key.pem:/run/secrets/konnectd_signing_private_key:ro
+      - ../configs/kopano/konnectd-encryption-secret.key:/run/secrets/konnectd_encryption_secret:ro
     depends_on:
     - openldap
     command:
@@ -55,44 +55,32 @@ services:
   # owncloud frontend
   phoenix:
     build:
-      context: ./build/phoenix
+      context: ../build/phoenix/src
       dockerfile: Dockerfile
     container_name: phoenix
     volumes:
-       - ./configs/phoenix/config.json:/app/config.json:ro
-    command: yarn run watch --allowed-hosts owncloud.localhost --host 0.0.0.0
+       - ../configs/phoenix/config.json:/usr/share/nginx/html/config.json:ro
     networks:
       - ocis
 
   # The meat of it
   ocdavsvc:
     build:
-      context: ./build/reva
+      context: ../build/reva
       dockerfile: Dockerfile
     container_name: ocdavsvc
     volumes:
-      - ./configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
+      - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
     networks:
       - ocis
       
   authsvc:
     build:
-      context: ./build/reva
+      context: ../build/reva
       dockerfile: Dockerfile
     container_name: authsvc
     volumes:
-      - ./configs/reva/authsvc.toml:/etc/revad/revad.toml
-    networks:
-      - ocis
-      
-  storageprovidersvc:
-    build:
-      context: ./build/reva
-      dockerfile: Dockerfile
-    container_name: storageprovidersvc
-    volumes:
-      - ./configs/reva/storageprovidersvc.toml:/etc/revad/revad.toml
-      - ./examples/data:/data
+      - ../configs/reva/authsvc.toml:/etc/revad/revad.toml
     networks:
       - ocis
 
@@ -112,7 +100,7 @@ services:
     image: abiosoft/caddy:no-stats
     container_name: caddy
     volumes:
-      - ./configs/Caddyfile:/etc/Caddyfile
+      - ../configs/Caddyfile:/etc/Caddyfile
     ports:
       - "8443:8443"
     networks:

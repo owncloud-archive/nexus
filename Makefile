@@ -31,9 +31,7 @@ future: up ##@containers Start a development environment
 
 .PHONY: reva-container
 reva-container: reva-src ##@reva Build a docker container for reva, the storage
-	docker-compose build ocdavsvc
-	docker-compose build authsvc
-	docker-compose build storageprovidersvc
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml build ocdavsvc authsvc storageprovidersvc
 
 reva-src: build/reva/src ##@reva Get reva sources
 build/reva/src:
@@ -44,20 +42,34 @@ build/reva/src:
 
 .PHONY: phoenix-container
 phoenix-container: phoenix-src ##@phoenix Build a docker container for phoenix, the web frontend
-	docker-compose build phoenix
+	docker-compose -f deploy/core.yml build phoenix
+
+build/eos-docker/src:
+	git clone https://gitlab.cern.ch/eos/eos-docker.git build/eos-docker/src
+
+.PHONY: start-eos
+start-eos: build/eos-docker/src
+	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
+
+.PHONY: stop-eos
+stop-eos: build/eos-docker/src
+	./build/eos-docker/src/scripts/shutdown_services.sh
 
 phoenix-src: build/phoenix/src ##@phoenix Get phoenix sources
 build/phoenix/src:
 	git clone git@github.com:owncloud/phoenix.git build/phoenix/src
 
 .PHONY: up
-up: reva-container phoenix-container ##@containers docker-compose up all containers
-	CURRENT_UID=$(CURRENT_UID) docker-compose up
+up: start-eos reva-container phoenix-container ##@containers docker-compose up all containers
+	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d
 
 .PHONY: down
-down: ##@containers docker-compose down all containers
-	CURRENT_UID=$(CURRENT_UID) docker-compose down
+down: stop-eos ##@containers docker-compose down all containers
+	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/core.yml -f deploy/storage/eos.yml down
 
+.PHONY: logs
+logs: 
+	docker-compose -f deploy/core.yml -f deploy/storage/eos.yml logs -f
 
 .PHONY: litmus
 test-litmus: ##@tests run litmus tests - requires an instance with basic auth credential strategy
@@ -68,7 +80,7 @@ clean: clean-containers clean-src ##@cleanup Cleanup sources and containers
 
 .PHONY: clean-containers
 clean-containers: ##@cleanup Stop and cleanup containers
-	CURRENT_UID=$(CURRENT_UID) docker-compose rm -s
+	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/storage/eos.yml -f deploy/core.yml rm -s
 
 .PHONY: clean
 clean-src: ##@cleanup Cleanup sources
