@@ -1,6 +1,11 @@
 # nexus
 
-This repository is used a a starting point for collaboration on integrating reva with phoenix an IdP and other components.
+This repository is used as a starting point for collaboration on the nexus, a new architecture for owncloud. It integrates
+- [phoenix](https://github.com/owncloud/phoenix), the new ownCloud vue.js web ui 
+- [reva](https://github.com/cernbox/reva), the new [CS3](https://github.com/cernbox/cs3apis/) based storage layer, written in golang
+- [konnect](https://github.com/Kopano-dev/konnect), an OpenID Connect capable identity provider (IdP) from Kopano (also golang)
+- [caddy][https://github.com/mholt/caddy/] as a reverse proxy
+- and further services like [OpenLDAP](https://github.com/openldap/openldap) and [EOS](https://github.com/cern-eos/eos)
 
 # TL;dr
 
@@ -12,9 +17,9 @@ make future
 
 Afterwards you can hack on `./build/src/reva` or  `./build/src/phoenix`.
 
-Changes to reva can be built and redeployed with `make future`.
+Changes to reva can be built and redeployed with `make reva-rebuild` or only for specific services.
 
-Changes to phoenix are automatically redeployed by the `yarn run watch` inside the phoenix container.
+FIXME Changes to phoenix are automatically redeployed by the `yarn run watch` inside the phoenix container.
 
 When you are done, commit the changes in `./build/src/*` to a feature or bugfix branch (as in prefix it with `feature/` or `bugfix/`)
 
@@ -25,7 +30,7 @@ make down
 make clean
 ```
 
-Happy coding!
+Happy coding! If you want to know more have a look at the Makefile!
 
 # Docker compose
 
@@ -115,3 +120,7 @@ The idea is to have a docker container for development and another one for build
 ## phoenix
 
 The idea is to have a docker container for development that monitors changes and automatically rebuilds the web ui and another one for building the release.
+
+## EOS
+
+EOS is a software solution for central data recording, user analysis and data processing. https://eos.web.cern.ch/
