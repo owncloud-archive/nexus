@@ -64,4 +64,5 @@ mount_path = "/"
 mount_id = "123e4567-e89b-12d3-a456-426655440000"
 
 [grpc.services.storageprovidersvc.drivers.eos]
+namespace = "/eos/dockertest/"
 master_url = "root://eos-mgm-test.eoscluster.cern.ch"
