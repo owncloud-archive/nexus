@@ -91,6 +91,11 @@ future: up ##@containers Start a development environment
 up: start-eos reva-container phoenix-container ##@containers docker-compose up all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d
 
+# to test litmus we need to use basic auth. the deploy/core-litmus.yml uses env vars to override the necessary config
+.PHONY: up-litmus
+up-litmus: start-eos reva-container phoenix-container ##@containers docker-compose up all containers, but use basic auth
+	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/core-litmus.yml -f deploy/storage/eos.yml up -d
+
 .PHONY: down
 # TODO split up so we can up/down eos & reva individually?
 down: stop-eos ##@containers docker-compose down all containers
@@ -197,5 +202,5 @@ clean-src: ##@cleanup Cleanup sources
 
 .PHONY: test-litmus
 test-litmus: ##@tests run litmus tests - requires an instance with basic auth credential strategy
-	# FIXME mounting litmus does not work from within the makefile
-	docker run -e LITMUS_URL="http://ocdavsvc:9998/remote.php/webdav/" -e LITMUS_USERNAME=aaliyah_abernathy -e LITMUS_PASSWORD=secret --network=nexus_ocis -v "$(pwd)"/litmus:/root owncloud/litmus
+	# FIXME mounting the folder 'litmus' does not work from within the makefile
+	docker run -e LITMUS_URL="http://ocdavsvc:9998/remote.php/webdav/" -e LITMUS_USERNAME=aaliyah_adams -e LITMUS_PASSWORD=secret --network=deploy_ocis -v "$(pwd)"/litmus:/root owncloud/litmus

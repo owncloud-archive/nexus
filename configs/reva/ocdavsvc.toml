@@ -26,9 +26,7 @@ priority = 200
 [http.middlewares.auth]
 priority = 300
 authsvc = "authsvc:9999"
-#credential_strategy = "basic"
-# FIXME the code in github.com/cernbox/reva/cmd/revad/svcs/httpsvcs/handlers/auth/credential/strategy/oidc/oidc.go is a leftover from an earlier experiment, see https://github.com/owncloud/nexus/issues/2
-credential_strategy = "oidc" # use this to test litmus
+credential_strategy = "oidc"
 token_strategy = "header"
 token_writer = "header"
 token_manager = "jwt"

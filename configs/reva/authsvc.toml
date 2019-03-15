@@ -43,10 +43,8 @@ secret = "Pive-Fumkiu4"
 
 [grpc.services.authsvc]
 auth_manager = "oidc"
-#auth_manager = "ldap" # use this to test litmus
 token_manager = "jwt"
 user_manager = "oidc"
-#user_manager = "ldap" # use this to test litmus
 
 #[grpc.services.authsvc.token_managers]
 #driver = "jwt"
