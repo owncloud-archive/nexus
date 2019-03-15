@@ -160,6 +160,11 @@ start-eos: eos-src ##@eos Start EOS services
 	# TODO find a way to properly inject the EOS_UTF8 env var into the container
 	sed -i "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --net/" ./build/eos-docker/src/scripts/start_services.sh
 	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
+	# TODO find a way to provision users on the fly
+	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_adams
+	# make daemon the owner of the file ...
+	# TODO clarify: the sss auth seems to force user daemon to do everything, eos -r 0 0 or eos -r 1500 1500 does not change the actual user
+	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_adams
 
 .PHONY: stop-eos
 stop-eos: eos-src ##@eos Stop EOS services
