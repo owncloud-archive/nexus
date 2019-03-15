@@ -157,6 +157,8 @@ build/phoenix/src:
 
 .PHONY: start-eos
 start-eos: eos-src ##@eos Start EOS services
+	# TODO find a way to properly inject the EOS_UTF8 env var into the container
+	sed -i "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --net/" ./build/eos-docker/src/scripts/start_services.sh
 	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
 
 .PHONY: stop-eos
