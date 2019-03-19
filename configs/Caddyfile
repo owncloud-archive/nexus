@@ -26,6 +26,8 @@ owncloud.localhost:8443 {
                 transparent
 	}
 
+
+
     # redirect / to /phoenix
 	redir 307 {
 		if {path} is /
@@ -34,6 +36,7 @@ owncloud.localhost:8443 {
 
 	proxy / ocdavsvc:9998 {
                 transparent
+		except /status.php
 	}
 
 }

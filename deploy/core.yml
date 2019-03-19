@@ -108,6 +108,7 @@ services:
     container_name: caddy
     volumes:
       - ../configs/Caddyfile:/etc/Caddyfile
+      - ../examples/caddy:/srv
     ports:
       - "8443:8443"
     networks:
