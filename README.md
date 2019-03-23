@@ -4,7 +4,7 @@ This repository is used as a starting point for collaboration on the nexus, a ne
 - [phoenix](https://github.com/owncloud/phoenix), the new ownCloud vue.js web ui 
 - [reva](https://github.com/cernbox/reva), the new [CS3](https://github.com/cernbox/cs3apis/) based storage layer, written in golang
 - [konnect](https://github.com/Kopano-dev/konnect), an OpenID Connect capable identity provider (IdP) from Kopano (also golang)
-- [caddy][https://github.com/mholt/caddy/] as a reverse proxy
+- [caddy](https://github.com/mholt/caddy/) as a reverse proxy
 - and further services like [OpenLDAP](https://github.com/openldap/openldap) and [EOS](https://github.com/cern-eos/eos)
 
 # TL;dr
