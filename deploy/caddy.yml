@@ -1,0 +1,18 @@
+version: '3'
+services:
+
+  # Overall proxy for all http requests
+  caddy:
+    image: abiosoft/caddy:no-stats
+    container_name: caddy
+    volumes:
+      - ../configs/Caddyfile:/etc/Caddyfile
+      - ../configs/ssl/owncloud.localhost.crt:/etc/ssl/owncloud.localhost.crt
+      - ../configs/ssl/owncloud.localhost.key:/etc/ssl/owncloud.localhost.key
+    ports:
+      - "8443:8443"
+      - "8444:8444"
+    networks:
+      ocis:
+        aliases:
+          - owncloud.localhost

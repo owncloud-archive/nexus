@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  # owncloud phoenix web frontend
+  phoenix:
+    build:
+      context: ../build/phoenix/src
+    container_name: phoenix
+    environment:
+      SERVER_HOST: owncloud.localhost:8443
+    volumes:
+       - ../configs/phoenix/config.json:/usr/share/nginx/html/config.json:ro
+    networks:
+      - ocis

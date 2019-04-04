@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
 
   # Identity source
@@ -19,6 +19,7 @@ services:
       - /etc/ldap/slapd.d
       - /container/service/slapd/assets/certs/
       - ../examples/ldap/base.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-base.ldif
+      # expose port so we can edit users in the ldap server
     ports:
       - "8389:389"
     networks:
@@ -51,72 +52,3 @@ services:
       "konnectd serve --iss=https://owncloud.localhost:8443 --log-level=debug --identifier-registration-conf=/etc/kopano/konnectd-identifier-registration.yaml --signing-private-key=/run/secrets/konnectd_signing_private_key --signing-method RS256 ldap"
     networks:
       - ocis
-
-  # owncloud phoenix web frontend
-  phoenix:
-    build:
-      context: ../build/phoenix/src
-      dockerfile: Dockerfile
-    container_name: phoenix
-    volumes:
-       - ../configs/phoenix/config.json:/usr/share/nginx/html/config.json:ro
-    networks:
-      - ocis
-
-  # reva services
-
-  # a webdav service
-  ocdavsvc:
-    build:
-      context: ../build/reva
-      dockerfile: Dockerfile
-    container_name: ocdavsvc
-    volumes:
-      - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
-    environment:
-      - REVA_HTTP_MIDDLEWARES_AUTH_CREDENTIAL_STRATEGY=basic
-    networks:
-      - ocis
-
-  # an authentication service
-  authsvc:
-    build:
-      context: ../build/reva
-      dockerfile: Dockerfile
-    container_name: authsvc
-    volumes:
-      - ../configs/reva/authsvc.toml:/etc/revad/revad.toml
-    environment:
-      - REVA_GRPC_SERVICES_AUTHSVC_AUTH_MANAGER=ldap
-      - REVA_GRPC_SERVICES_AUTHSVC_USER_MANAGER=ldap
-    networks:
-      - ocis
-
-#  # the meat of it - used to start an all in one container
-#  reva:
-#    build:
-#      context: ./build/reva
-#      dockerfile: Dockerfile
-#    container_name: reva
-#    volumes:
-#      - ./configs/reva/revad.toml:/etc/revad/revad.toml
-#      - ./examples/data:/data
-#    networks:
-#      - ocis
-
-  # Overall proxy for all http requests
-  caddy:
-    image: abiosoft/caddy:no-stats
-    container_name: caddy
-    volumes:
-      - ../configs/Caddyfile:/etc/Caddyfile
-      - ../examples/caddy:/srv
-    ports:
-      - "8443:8443"
-    networks:
-      ocis:
-        aliases:
-          - owncloud.localhost
-
-networks:
-  ocis:

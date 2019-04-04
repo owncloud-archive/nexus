@@ -1,0 +1,32 @@
+version: '3'
+services:
+
+  # a webdav service
+  ocdavsvc-basic:
+    build:
+      context: ../build/reva
+      dockerfile: Dockerfile
+    container_name: ocdavsvc-basic
+    volumes:
+      - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
+    environment:
+      # overwrite credential strategy, litmus only supports basic auth
+      - REVA_HTTP_MIDDLEWARES_AUTH_AUTHSVC=authsvc-ldap:9999
+      - REVA_HTTP_MIDDLEWARES_AUTH_CREDENTIAL_STRATEGY=basic
+    networks:
+      - ocis
+
+  # an authentication service
+  authsvc-ldap:
+    build:
+      context: ../build/reva
+      dockerfile: Dockerfile
+    container_name: authsvc-ldap
+    volumes:
+      - ../configs/reva/authsvc.toml:/etc/revad/revad.toml
+    environment:
+      # basic auth requires authenticating with ldap directly
+      - REVA_GRPC_SERVICES_AUTHSVC_AUTH_MANAGER=ldap
+      - REVA_GRPC_SERVICES_AUTHSVC_USER_MANAGER=ldap
+    networks:
+      - ocis

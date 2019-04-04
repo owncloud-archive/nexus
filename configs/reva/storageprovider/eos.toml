@@ -3,6 +3,48 @@ log_file = "stderr"
 log_mode = "dev"
 max_cpus = "2"
 
+[http]
+enabled_services = ["datasvc"]
+enabled_middlewares = ["log", "trace", "auth"]
+network = "tcp"
+address = "0.0.0.0:9998"
+
+[http.middlewares.trace]
+priority = 100
+header = "x-trace"
+
+[http.middlewares.log]
+priority = 200
+
+[http.middlewares.auth]
+# the storage provider is an 'internal' service, data requests should use the internal jwt token
+priority = 300
+token_strategy = "header"
+token_manager = "jwt"
+authsvc = "authsvc:9999" # not needed, the token should suffice
+credential_strategy = "basic" # not needed, the token should suffice
+token_writer = "header" # not needed, the token should suffice
+
+[http.middlewares.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+[http.middlewares.auth.token_strategies.header]
+header = "X-Access-Token"
+
+[http.middlewares.auth.token_writers.header]
+header = "INVALID" # not needed, reading the token should suffice
+
+[http.services.datasvc]
+driver = "eos"
+prefix = "data"
+temp_folder = "/var/tmp/"
+
+[http.services.datasvc.drivers.eos]
+namespace = "/eos/dockertest/"
+master_url = "root://eos-mgm-test.eoscluster.cern.ch"
+root_uid = 0
+root_gid = 0
+
 [grpc]
 network = "tcp"
 address = "0.0.0.0:9999"
@@ -29,27 +71,7 @@ header = "x-access-token"
 token_strategy = "header"
 token_manager = "jwt"
 
-[grpc.interceptors.auth.methods]
-"/cs3.storageproviderv0alpha.StorageProviderService/CreateDirectory" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/Delete" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/Move" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/List" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/StartWriteSession" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/Write" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/FinishWriteSession" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/Read" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/ListVersions" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/ReadVersion" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/RestoreVersion" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/ListRecycle" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/RestoreRecycleItem" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/PurgeRecycle" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/SetACL" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/UpdateACL" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/UnsetACL" = true
-"/cs3.storageproviderv0alpha.StorageProviderService/GetQuota" = true
-
+[grpc.interceptors.auth.skip_methods]
 
 [grpc.interceptors.auth.token_strategies.header]
 # TODO not needed? would need to be lowerase anyway
@@ -62,6 +84,11 @@ secret = "Pive-Fumkiu4"
 driver = "eos"
 mount_path = "/"
 mount_id = "123e4567-e89b-12d3-a456-426655440000"
+data_server_url = "http://storageprovidersvc:9998/data"
+
+[grpc.services.storageprovidersvc.available_checksums]
+md5   = 100
+unset = 1000
 
 [grpc.services.storageprovidersvc.drivers.eos]
 namespace = "/eos/dockertest/"
