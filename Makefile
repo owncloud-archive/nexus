@@ -88,7 +88,8 @@ future: up ##@containers Start a development environment
 #    open "https://owncloud.localhost:8443"
 
 .PHONY: up
-up: start-eos reva-container phoenix-container ##@containers docker-compose up all containers
+# FIXME we need to checkout the src of phoenix befor building the containers or building the container for reva fails
+up: start-eos reva-src phoenix-src reva-container phoenix-container ##@containers docker-compose up all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose -f deploy/core.yml -f deploy/storage/eos.yml up -d
 
 # to test litmus we need to use basic auth. the deploy/core-litmus.yml uses env vars to override the necessary config
