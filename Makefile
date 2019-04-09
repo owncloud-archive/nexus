@@ -167,7 +167,7 @@ start-eos: eos-src ##@eos Start EOS services
 	# EOS_UTF8=1 enables utf8 filenames
 	# EOS_SYNCTIME_ACCOUNTING=1 enables mtime propagation
 	# TODO there does not seem to be etag propagation
-	sed -i "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --env EOS_SYNCTIME_ACCOUNTING=1 --net/" ./build/eos-docker/src/scripts/start_services.sh
+	sed -i "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --env EOS_NS_ACCOUNTING=1 --env EOS_SYNCTIME_ACCOUNTING=1 --net/" ./build/eos-docker/src/scripts/start_services.sh
 	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
 	# TODO find a way to provision users on the fly
 	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_adams
