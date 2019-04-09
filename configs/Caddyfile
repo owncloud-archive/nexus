@@ -40,3 +40,15 @@ owncloud.localhost:8443 {
 	}
 
 }
+
+owncloud.localhost:8444 {
+	errors stderr
+	log stdout
+
+	tls self_signed
+
+	proxy / ocdavsvc-basic:9998 {
+        transparent
+		except /status.php
+	}
+}
