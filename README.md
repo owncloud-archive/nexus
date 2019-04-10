@@ -9,13 +9,17 @@ This repository is used as a starting point for collaboration on the nexus, a ne
 
 # TL;dr
 
-To set up a development environment for the future owncloud file sync and share platform run
+To check out the development environment for the future owncloud file sync and share platform run
 
-```
-make future
-```
+- get the sources with `git clone git@github.com:owncloud/nexus.git`
+- Run `cd nexus && make future`
+- Point your browser to https://owncloud.localhost:8443/ or
+- Point your desktop client to https://owncloud.localhost:8444/ (note the different port)
+- Log in as `aaliyah_abernathy` with password `secret`
 
-Afterwards you can hack on `./build/src/reva` or  `./build/src/phoenix`.
+**Welcome to the nexus!** Have a look around and try syncing!
+
+If you find something to work on you can hack on `./build/src/reva` or  `./build/src/phoenix`.
 
 Changes to reva can be built and redeployed with `make reva-rebuild` or only for specific services.
 
@@ -38,8 +42,17 @@ We are currently using docker-compose to set up a development environment. Run `
 1. a caddy server, used as reverse proxy
 2. kopanod as IdP
 3. phoenix es web interface
-4. revad as storage layer and webdav service
-5. openldap as user database with example users
+4. openldap as user database with example users
+5. revad as webdav service and storag provider
+   - oidc based auth is provided on port 8443 by
+     - the ocdavsvc webdav api service
+     - the authsvc authentication service
+   - basic auth is provided on port 8444
+     - the ocdavsvc-basic webdav api service
+     - the authsvc-ldap authentication service
+   - storageprovidersvc sits on top of eos
+
+6. eos as the underlying storage technology
 
 The `Makefile` has help:
 ```
