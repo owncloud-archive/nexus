@@ -163,10 +163,11 @@ build/phoenix/src:
 
 .PHONY: start-eos
 start-eos: eos-src ##@eos Start EOS services
-	# TODO find a way to properly inject the EOS_UTF8 env var into the container
 	# EOS_UTF8=1 enables utf8 filenames
-	# EOS_SYNCTIME_ACCOUNTING=1 enables mtime propagation
-	# TODO there does not seem to be etag propagation
+	# EOS_NS_ACCOUNTING=1 enables dir size propagation
+	# EOS_SYNCTIME_ACCOUNTING=1 enables mtime propagation in general
+	#  - needs the sys.mtime.propagation=1 on a home dir, see below
+	#  - sys.allow.oc.sync=1 is not needed, it is an option for the oes built in webdav endpoint
 	sed -i "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --env EOS_NS_ACCOUNTING=1 --env EOS_SYNCTIME_ACCOUNTING=1 --net/" ./build/eos-docker/src/scripts/start_services.sh
 	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
 	# TODO find a way to provision users on the fly
@@ -174,6 +175,8 @@ start-eos: eos-src ##@eos Start EOS services
 	# make daemon the owner of the file ...
 	# TODO clarify: the sss auth seems to force user daemon to do everything, eos -r 0 0 or eos -r 1500 1500 does not change the actual user
 	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_adams
+	# enable mtime propagation for aaliyah_adams home dir
+	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_adams
 
 .PHONY: stop-eos
 stop-eos: eos-src ##@eos Stop EOS services
