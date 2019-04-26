@@ -31,8 +31,9 @@ header = "X-Access-Token"
 token_strategy = "header"
 token_manager = "jwt"
 
-[grpc.interceptors.auth.methods]
-"/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
+[grpc.interceptors.auth.skip_methods]
+# GenerateAccessToken contains the credentials in the payload. Skip auth, otherwise services cannot obtain a token.
+"/cs3.authv0alpha.AuthService/GenerateAccessToken" = true
 
 [grpc.interceptors.auth.token_strategies.header]
 header = "X-Access-Token"

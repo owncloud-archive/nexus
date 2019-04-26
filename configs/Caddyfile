@@ -6,7 +6,7 @@ owncloud.localhost:8443 {
 	errors stderr
 	log stdout
 
-	tls self_signed
+	tls /etc/ssl/owncloud.localhost.crt /etc/ssl/owncloud.localhost.key
 
 	# konnect oidc
 	proxy /.well-known/openid-configuration konnectd:8777
@@ -21,22 +21,23 @@ owncloud.localhost:8443 {
 		transparent
 	}
 
+	# TODO workaround for unprefixed image from phoenix
+	proxy /img/ phoenix:80 {
+        	transparent
+	}
 	proxy /phoenix/ phoenix:80 {
 		without /phoenix
-                transparent
+        	transparent
 	}
 
-
-
-    # redirect / to /phoenix
+	# redirect / to /phoenix
 	redir 307 {
 		if {path} is /
 		/phoenix/
 	}
 
 	proxy / ocdavsvc:9998 {
-                transparent
-		except /status.php
+        	transparent
 	}
 
 }
@@ -45,10 +46,9 @@ owncloud.localhost:8444 {
 	errors stderr
 	log stdout
 
-	tls self_signed
+	tls /etc/ssl/owncloud.localhost.crt /etc/ssl/owncloud.localhost.key
 
 	proxy / ocdavsvc-basic:9998 {
-        transparent
-		except /status.php
+        	transparent
 	}
 }

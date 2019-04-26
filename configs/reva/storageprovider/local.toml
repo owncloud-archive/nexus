@@ -3,6 +3,31 @@ log_file = "stderr"
 log_mode = "dev"
 max_cpus = "2"
 
+[http]
+enabled_services = ["datasvc"]
+#enabled_middlewares = ["log", "trace", "auth"]
+enabled_middlewares = ["log", "trace"]
+network = "tcp"
+address = "0.0.0.0:9998"
+
+[http.middlewares.trace]
+priority = 100
+header = "x-trace"
+
+[http.middlewares.log]
+priority = 200
+
+[http.middlewares.auth]
+# the storage provider is an 'internal' service, data requests should use the internal jwt token
+
+[http.services.datasvc]
+driver = "local"
+prefix = "data"
+temp_folder = "/var/tmp/"
+
+[http.services.datasvc.drivers.local]
+root = "/data"
+
 [grpc]
 network = "tcp"
 address = "0.0.0.0:9999"
@@ -29,11 +54,10 @@ header = "x-access-token"
 token_strategy = "header"
 token_manager = "jwt"
 
-[grpc.interceptors.auth.methods]
-"/cs3.storageproviderv0alpha.StorageProviderService/Stat" = true
+[grpc.interceptors.auth.skip_methods]
 
 [grpc.interceptors.auth.token_strategies.header]
-# TODO not needed? would need to be lowerase anyway
+# TODO not needed? would need to be lowercase anyway
 header = "X-Access-Token"
 
 [grpc.interceptors.auth.token_managers.jwt]

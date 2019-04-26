@@ -1,0 +1,26 @@
+version: '3'
+services:
+
+  # TODO owncloud phoenix web frontend with yarn watch all
+  phoenix:
+    build:
+      context: ../build/phoenix
+      dockerfile: Dockerfile
+    container_name: phoenix
+    environment:
+      SERVER_HOST: owncloud.localhost:8443
+    volumes:
+       - ../build/phoenix/src:/app
+       - ../configs/phoenix/config.json:/app/config.json:ro
+       - node_modules:/app/node_modules
+       #- node_modules:/app/owncloud-design-system/node_modules
+    #entrypoint: ["sh", "-c"]
+    #command: ["cp /tmp/yarn.lock yarn.lock & nodemon server.js & if [ '(tar -cf - /usr/local/share/.cache/yarn/v1 | crc32)' != '(tar -cf - .yarn_cache | crc32)' ]; then cp -r /usr/local/share/.cache/yarn/v1/. .yarn_cache/; fi"]
+    command: yarn run watch-all --allowed-hosts owncloud.localhost --host 0.0.0.0 --disable-host-check
+    networks:
+      - ocis
+
+
+# used to hide the node_modules from the host
+volumes:
+  node_modules:

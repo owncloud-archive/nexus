@@ -30,6 +30,7 @@ credential_strategy = "oidc"
 token_strategy = "header"
 token_writer = "header"
 token_manager = "jwt"
+skip_methods = ["/status.php"]
 
 [http.middlewares.cors]
 priority = 400

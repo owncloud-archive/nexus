@@ -18,7 +18,7 @@ RUN go mod download
 
 COPY ./src ./
 
-RUN cd cmd/revad && go build
+RUN make build
 
 # everything http runs on here
 EXPOSE 9998
