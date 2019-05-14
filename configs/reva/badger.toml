@@ -1,0 +1,211 @@
+[core]
+max_cpus = "2"
+
+[log]
+output = "stdout"
+mode = "dev"
+level = "debug"
+
+[http]
+enabled_services = ["datasvc", "ocdavsvc", "ocssvc"]
+#enabled_middlewares = ["log", "trace", "auth", "cors"]
+enabled_middlewares = ["log", "trace", "auth"]
+network = "tcp"
+address = "0.0.0.0:9998"
+
+[http.middlewares.trace]
+priority = 100
+header = "x-trace"
+
+[http.middlewares.log]
+priority = 200
+
+[http.middlewares.auth]
+priority = 300
+authsvc = "127.0.0.1:9999"
+credential_strategy = "oidc"
+token_strategy = "header"
+token_writer = "header"
+token_manager = "jwt"
+skip_methods = ["/status.php"]
+
+[http.middlewares.cors]
+priority = 400
+
+[http.middlewares.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+[http.middlewares.auth.token_strategies.header]
+header = "X-Access-Token"
+
+[http.middlewares.auth.token_writers.header]
+header = "X-Access-Token"
+
+
+[http.services.ocdavsvc]
+prefix = ""
+chunk_folder = "/var/tmp/owncloud/chunks"
+storageprovidersvc = "127.0.0.1:9999"
+enable_cors = true
+
+[http.services.ocssvc]
+prefix = "ocs"
+[http.services.ocssvc.config]
+version = "1.8"
+website = "nexus"
+host = "https://owncloud.localhost:8443"
+contact = "admin@owncloud.localhost"
+ssl = "true"
+[http.services.ocssvc.capabilities.capabilities.core]
+poll_interval = 60
+webdav_root = "remote.php/webdav"
+[http.services.ocssvc.capabilities.capabilities.core.status]
+installed = true
+maintenance = false
+needsDbUpgrade = false
+version = "10.0.9.5"
+versionstring = "10.0.9"
+edition = "community"
+productname = "reva"
+hostname = ""
+[http.services.ocssvc.capabilities.capabilities.checksums]
+supported_types = ["SHA256"]
+preferred_upload_type = "SHA256"
+[http.services.ocssvc.capabilities.capabilities.files]
+private_links = true
+bigfilechunking = true
+blacklisted_files = ["foo"]
+undelete = true
+versioning = true
+[http.services.ocssvc.capabilities.capabilities.dav]
+chunking = "1.0"
+[http.services.ocssvc.capabilities.capabilities.files_sharing]
+api_enabled = true
+resharing = true
+group_sharing = true
+auto_accept_share = true
+share_with_group_members_only = true
+share_with_membership_groups_only = true
+default_permissions = 22
+search_min_length = 3
+[http.services.ocssvc.capabilities.capabilities.files_sharing.public]
+enabled = true
+send_mail = true
+social_share = true
+upload = true
+multiple = true
+supports_upload_only = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.public.password]
+enforced = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.public.password.enforced_for]
+read_only = true
+read_write = true
+upload_only = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.public.expire_date]
+enabled = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.user]
+send_mail = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.user_enumeration]
+enabled = true
+group_members_only = true
+[http.services.ocssvc.capabilities.capabilities.files_sharing.federation]
+outgoing = true
+incoming = true
+[http.services.ocssvc.capabilities.capabilities.notifications]
+endpoints = ["list", "get", "delete"]
+[http.services.ocssvc.capabilities.version]
+edition = "nexus"
+major = 10
+minor = 0
+micro = 11
+string = "10.0.11"
+
+[http.services.datasvc]
+driver = "s3"
+prefix = "data"
+temp_folder = "/var/tmp/"
+
+[http.services.datasvc.drivers.s3]
+access_key = "REPLACE-EXAMPLE-ACCESS-KEY"
+secret_key = "REPLACE-EXAMPLE-SECRET-KEY"
+endpoint = "127.0.0.1:8900"
+bucket = "mybucket"
+
+## authsvc part
+
+[grpc]
+network = "tcp"
+address = "0.0.0.0:9999"
+access_log = "stderr"
+#tls_enabled = true
+#tls_cert = "/etc/gridsecurity/host.cert"
+#tls_key = "/etc/gridsecurity/host.key"
+enabled_services = ["authsvc", "storageprovidersvc"]
+enabled_interceptors = ["auth", "prometheus", "log", "trace"]
+
+
+[grpc.interceptors.trace]
+priority = 100
+header = "x-trace"
+
+[grpc.interceptors.log]
+priority = 200
+
+[grpc.interceptors.prometheus]
+priority = 300
+
+[grpc.interceptors.auth]
+priority = 400
+header = "x-access-token"
+token_strategy = "header"
+token_manager = "jwt"
+skip_methods = ["/cs3.authv0alpha.AuthService/GenerateAccessToken"]
+
+#[grpc.interceptors.auth.skip_methods]
+# GenerateAccessToken contains the credentials in the payload. Skip auth, otherwise services cannot obtain a token.
+#"/cs3.authv0alpha.AuthService/GenerateAccessToken" = true
+
+[grpc.interceptors.auth.token_strategies.header]
+header = "X-Access-Token"
+
+[grpc.interceptors.auth.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+
+[grpc.services.authsvc]
+auth_manager = "oidc"
+token_manager = "jwt"
+user_manager = "oidc"
+
+#[grpc.services.authsvc.token_managers]
+#driver = "jwt"
+
+[grpc.services.authsvc.token_managers.jwt]
+secret = "Pive-Fumkiu4"
+
+[grpc.services.authsvc.auth_managers.ldap]
+hostname = "127.0.0.1"
+port = 8389
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
+
+[grpc.services.authsvc.user_managers.ldap]
+hostname = "127.0.0.1"
+port = 8389
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
+
+
+[grpc.services.storageprovidersvc]
+driver = "badger"
+mount_path = "/"
+mount_id = "123e4567-e89b-12d3-a456-426655440000"
+data_server_url = "http://owncloud.localhost:9998/data"
+
+[grpc.services.storageprovidersvc.available_checksums]
+md5   = 100
+unset = 1000

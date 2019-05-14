@@ -98,16 +98,18 @@ future: up ##@containers Start a development environment
 #    open "https://owncloud.localhost:8443"
 
 # FIXME we need to checkout the src of phoenix befor building the containers or building the container for reva fails
-up: start-eos reva-src phoenix-src reva-container phoenix-container ##@containers docker-compose up all containers
+up: start-eos phoenix-src phoenix-container ##@containers docker-compose up all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/caddy.yml \
 	  -f deploy/idm.yml \
-	  -f deploy/reva.yml \
-	  -f deploy/reva-basic.yml \
 	  -f deploy/phoenix.yml \
-	  -f deploy/storage/eos.yml \
 	  up -d
+	# update the caddy host file to let it access the host
+	docker-compose \
+	  -f deploy/network.yml \
+	  -f deploy/caddy.yml \
+	  exec caddy sh -c "echo -e \"\`/sbin/ip route|awk '/default/ { print \$$3 }'\`\thost.docker.internal\" | tee -a /etc/hosts > /dev/null"
 
 # TODO split up so we can up/down eos & reva individually?
 down: stop-eos ##@containers docker-compose down all containers
@@ -189,7 +191,7 @@ build/reva/src:
 	git clone git@github.com:owncloud/reva.git build/reva/src 
 	cd build/reva/src ; \
 	  git checkout $(REVA_BRANCH) ; \
-	  git remote add upstream git@github.com:cernbox/reva.git
+	  git remote add upstream git@github.com:cs3org/reva.git
 
 # docker-compose leaves no files we could check, mark as stateless
 .PHONY: reva-container reva-rebuild-auth reva-rebuild-ocdav reva-rebuild-storage
