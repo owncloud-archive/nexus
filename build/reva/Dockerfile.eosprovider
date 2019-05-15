@@ -1,5 +1,5 @@
 # Build the reva code
-ARG GO_VERSION=1.11
+ARG GO_VERSION=1.12
 FROM golang:${GO_VERSION}
 #RUN apk add --no-cache --update alpine-sdk git ca-certificates gcc
 WORKDIR /src
