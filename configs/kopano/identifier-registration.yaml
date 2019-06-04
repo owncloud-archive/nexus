@@ -8,7 +8,7 @@ clients:
     application_type: web
     insecure: yes
     redirect_uris:
-       - https://owncloud.localhost:8443/phoenix/
+       - https://owncloud.localhost:8443/phoenix/oidc-callback.html
 
 #  - id: playground.js
 #    name: OIDC Playground

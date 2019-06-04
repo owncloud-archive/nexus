@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+  # Identity source
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    command: --copy-service
+    environment:
+      LDAP_ORGANISATION: "ownCloud GmbH."
+      LDAP_DOMAIN: "owncloudqa.com"
+      LDAP_BASE_DN: "dc=owncloudqa,dc=com"
+      LDAP_TLS_CIPHER_SUITE: "NORMAL"
+      LDAP_TLS_VERIFY_CLIENT: "allow"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+      - ../examples/ldap/base.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/10-base.ldif
+      # expose port so we can edit users in the ldap server
+    ports:
+      - "8389:389"
+      - "8636:636"
+    networks:
+      - ocis

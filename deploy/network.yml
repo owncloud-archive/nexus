@@ -2,3 +2,4 @@ version: '3'
 
 networks:
   ocis:
+    external: true

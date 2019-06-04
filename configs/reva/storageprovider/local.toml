@@ -1,7 +1,10 @@
 [core]
-log_file = "stderr"
-log_mode = "dev"
 max_cpus = "2"
+
+[log]
+output = "stdout"
+mode = "dev"
+level = "debug"
 
 [http]
 enabled_services = ["datasvc"]
@@ -53,8 +56,6 @@ priority = 300
 header = "x-access-token"
 token_strategy = "header"
 token_manager = "jwt"
-
-[grpc.interceptors.auth.skip_methods]
 
 [grpc.interceptors.auth.token_strategies.header]
 # TODO not needed? would need to be lowercase anyway
