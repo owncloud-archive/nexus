@@ -1,7 +1,10 @@
 [core]
-log_file = "stderr"
-log_mode = "dev"
 max_cpus = "2"
+
+[log]
+output = "stdout"
+mode = "dev"
+level = "debug"
 
 [http]
 enabled_services = ["ocdavsvc"]
@@ -9,12 +12,6 @@ enabled_services = ["ocdavsvc"]
 enabled_middlewares = ["log", "trace", "auth"]
 network = "tcp"
 address = "0.0.0.0:9998"
-
-[http.services.ocdavsvc]
-prefix = ""
-chunk_folder = "/var/tmp/owncloud/chunks"
-storageprovidersvc = "storageprovidersvc:9999"
-enable_cors = true
 
 [http.middlewares.trace]
 priority = 100
@@ -44,3 +41,9 @@ header = "X-Access-Token"
 [http.middlewares.auth.token_writers.header]
 header = "X-Access-Token"
 
+
+[http.services.ocdavsvc]
+prefix = ""
+chunk_folder = "/var/tmp/owncloud/chunks"
+storageprovidersvc = "storageprovidersvc:9999"
+enable_cors = true

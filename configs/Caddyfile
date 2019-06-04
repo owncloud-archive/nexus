@@ -36,6 +36,11 @@ owncloud.localhost:8443 {
 		/phoenix/
 	}
 
+	proxy /ocs/ ocssvc:9998 {
+		without /ocs
+        	transparent
+	}
+
 	proxy / ocdavsvc:9998 {
         	transparent
 	}

@@ -1,0 +1,13 @@
+version: '3'
+services:
+
+  # a webdav service
+  ocdavsvc:
+    build:
+      context: ../build/reva
+      dockerfile: Dockerfile
+    container_name: ocdavsvc
+    volumes:
+      - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
+    networks:
+      - ocis

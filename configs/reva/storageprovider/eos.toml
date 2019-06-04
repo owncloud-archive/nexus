@@ -1,7 +1,10 @@
 [core]
-log_file = "stderr"
-log_mode = "dev"
 max_cpus = "2"
+
+[log]
+output = "stdout"
+mode = "dev"
+level = "debug"
 
 [http]
 enabled_services = ["datasvc"]
@@ -52,7 +55,7 @@ access_log = "stderr"
 #tls_enabled = true
 #tls_cert = "/etc/gridsecurity/host.cert"
 #tls_key = "/etc/gridsecurity/host.key"
-enabled_services = ["storageprovidersvc"]
+enabled_services = ["storageprovidersvc", "usershareprovidersvc"]
 # TODO we need to authenticate the cs3 calls
 enabled_interceptors = ["auth", "log", "trace"]
 
@@ -70,8 +73,6 @@ priority = 300
 header = "x-access-token"
 token_strategy = "header"
 token_manager = "jwt"
-
-[grpc.interceptors.auth.skip_methods]
 
 [grpc.interceptors.auth.token_strategies.header]
 # TODO not needed? would need to be lowerase anyway
@@ -91,5 +92,12 @@ md5   = 100
 unset = 1000
 
 [grpc.services.storageprovidersvc.drivers.eos]
+namespace = "/eos/dockertest/"
+master_url = "root://eos-mgm-test.eoscluster.cern.ch"
+
+[grpc.services.usershareprovidersvc]
+driver = "eos"
+
+[grpc.services.usershareprovidersvc.drivers.eos]
 namespace = "/eos/dockertest/"
 master_url = "root://eos-mgm-test.eoscluster.cern.ch"
