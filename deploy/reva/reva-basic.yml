@@ -8,11 +8,12 @@ services:
       dockerfile: Dockerfile
     container_name: ocdavsvc-basic
     volumes:
-      - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
-    environment:
-      # overwrite credential strategy, litmus only supports basic auth
-      - REVA_HTTP_MIDDLEWARES_AUTH_AUTHSVC=authsvc-ldap:9999
-      - REVA_HTTP_MIDDLEWARES_AUTH_CREDENTIAL_STRATEGY=basic
+      - ../configs/reva/ocdavsvc-basic.toml:/etc/revad/revad.toml
+    #TODO use env vars to configure reva ... the diff to the oidc config is minimal
+    #environment:
+    #  # overwrite credential strategy, litmus only supports basic auth
+    #  - REVA_HTTP_MIDDLEWARES_AUTH_AUTHSVC=authsvc-ldap:9999
+    #  - REVA_HTTP_MIDDLEWARES_AUTH_CREDENTIAL_STRATEGY=basic
     networks:
       - ocis
 
@@ -23,10 +24,11 @@ services:
       dockerfile: Dockerfile
     container_name: authsvc-ldap
     volumes:
-      - ../configs/reva/authsvc.toml:/etc/revad/revad.toml
-    environment:
-      # basic auth requires authenticating with ldap directly
-      - REVA_GRPC_SERVICES_AUTHSVC_AUTH_MANAGER=ldap
-      - REVA_GRPC_SERVICES_AUTHSVC_USER_MANAGER=ldap
+      - ../configs/reva/authsvc-ldap.toml:/etc/revad/revad.toml
+    #TODO use env vars to configure reva ... the diff to the oidc config is minimal
+    #environment:
+    #  # basic auth requires authenticating with ldap directly
+    #  - REVA_GRPC_SERVICES_AUTHSVC_AUTH_MANAGER=ldap
+    #  - REVA_GRPC_SERVICES_AUTHSVC_USER_MANAGER=ldap
     networks:
       - ocis

@@ -21,6 +21,13 @@ dn: uid=aaliyah_aañote,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10000
+gidNumber: 1000
+#homeDirectory is an IA5string, so no utf8, need to base63 encode
+#homeDirectory::L2hvbWUvZW9zLXVzZXIvYWFsaXlhaF9hYcOxb3Rl
+#homeDirectory::L2hvbWUvZ23DvGxsZXIK
+homeDirectory: /home/eos-user/aaliyah_aanote
 cn: aaliyah
 sn: aañote
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -33,11 +40,15 @@ dn: uid=aaliyah_bähr,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10001
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_baerh
 cn: aaliyah
 sn: bärh
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
 uid: aaliyah_bärh
-mail: aaliyah_baerh@owncloudqa.com@owncloudqa.com
+mail: aaliyah_baerh@owncloudqa.com
 displayName: aaliyah bärh
 
 # 小池_憲明, people, owncloudqa.com
@@ -45,6 +56,10 @@ dn: uid=小池_憲明,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10002
+gidNumber: 1000
+homeDirectory: /home/eos-user/xiaochi_xianming
 cn: 小池
 sn: 憲明
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -57,6 +72,10 @@ dn: uid=aaliyah_abernathy,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10003
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_abernathy
 cn: aaliyah
 sn: abernathy
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -69,6 +88,10 @@ dn: uid=aaliyah_adams,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10004
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_adams
 cn: aaliyah
 sn: adams
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -81,6 +104,10 @@ dn: uid=aaliyah_adams_II,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10005
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_adams_II
 cn: aaliyah
 sn: adams
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -93,6 +120,10 @@ dn: uid=aaliyah_adams_III,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10006
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_adams_III
 cn: aaliyah
 sn: adams
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -105,6 +136,10 @@ dn: uid=aaliyah_adams_IV,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10007
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_adams_IV
 cn: aaliyah
 sn: adams
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -117,6 +152,10 @@ dn: uid=aaliyah_adams_V,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10008
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_adams_V
 cn: aaliyah
 sn: adams
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=
@@ -129,6 +168,10 @@ dn: uid=aaliyah_anderson,ou=people,dc=owncloudqa,dc=com
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: posixAccount
+uidNumber: 10009
+gidNumber: 1000
+homeDirectory: /home/eos-user/aaliyah_anderson
 cn: aaliyah
 sn: anderson
 userPassword:: e1NTSEF9YWppZkFtckxIeExvcm0yOUdoWHBmYzdkU3Zpa2VzS2Q=

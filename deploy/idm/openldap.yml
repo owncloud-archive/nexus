@@ -25,3 +25,4 @@ services:
       - "8636:636"
     networks:
       - ocis
+      - eoscluster.cern.ch

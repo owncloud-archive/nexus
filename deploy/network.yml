@@ -3,3 +3,5 @@ version: '3'
 networks:
   ocis:
     external: true
+  eoscluster.cern.ch:
+    external: true

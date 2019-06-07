@@ -15,15 +15,14 @@ To check out the development environment for the future owncloud file sync and s
 - Run `cd nexus && make future`
 - Point your browser to https://owncloud.localhost:8443/ or
 - Point your desktop client to https://owncloud.localhost:8444/ (note the different port)
-- Log in as `aaliyah_abernathy` with password `secret`
+- Log in as `aaliyah_abernathy`, `aaliyah_adams` or `aaliyah_anderson` with password `secret`
+
 
 **Welcome to the nexus!** Have a look around and try syncing!
 
 If you find something to work on you can hack on `./build/src/reva` or  `./build/src/phoenix`.
 
 Changes to reva can be built and redeployed with `make reva-rebuild` or only for specific services.
-
-FIXME Changes to phoenix are automatically redeployed by the `yarn run watch` inside the phoenix container.
 
 When you are done, commit the changes in `./build/src/*` to a feature or bugfix branch (as in prefix it with `feature/` or `bugfix/`)
 
@@ -41,44 +40,75 @@ Happy coding! If you want to know more have a look at the Makefile!
 We are currently using docker-compose to set up a development environment. Run `make future` to get:
 1. a caddy server, used as reverse proxy
 2. kopanod as IdP
-3. phoenix es web interface
-4. openldap as user database with example users
-5. revad as webdav service and storag provider
+  - openldap as user database with example users
+  - `aaliyah_abernathy`, `aaliyah_adams`,`aaliyah_anderson` and all other users have the password `secret`
+3. revad as webdav service and storag provider
    - oidc based auth is provided on port 8443 by
      - the ocdavsvc webdav api service
      - the authsvc authentication service
    - basic auth is provided on port 8444
      - the ocdavsvc-basic webdav api service
      - the authsvc-ldap authentication service
-   - storageprovidersvc sits on top of eos
+   - storageprovidersvc talks to eos
 
-6. eos as the underlying storage technology
+4. phoenix as web interface
+5. eos as the underlying storage technology with home dirs precreated for `aaliyah_abernathy`, `aaliyah_adams` and `aaliyah_anderson`
 
 The `Makefile` has help:
 ```
 ✗ make help
-sage: make [target]
+usage: make [target]
 
 cleanup:
-  clean                           Cleanup sources and containers
+  clean                           Cleanup containers, network and sources
   clean-containers                Stop and cleanup containers
   clean-src                       Cleanup sources
 
 containers:
+  demo                            bring up a demo system
   future                          Start a development environment
   up                              docker-compose up all containers
   down                            docker-compose down all containers
+  logs                            show and follow nexus container logs
+
+eos:
+  start-eos                       Start EOS services
+  stop-eos                        Stop EOS services
+  eos-src                         Get EOS docker sources
 
 other:
   help                            Show this help
 
 phoenix:
-  phoenix-container               Build a docker container for phoenix, the web frontend
+  phoenix-up                      Up phoenix
+  phoenix-down                    Down phoenix
+  phoenix-restart                 Restart phoenix
+  phoenix-rebuild                 Rebuild and restart phoenix
   phoenix-src                     Get phoenix sources
 
 reva:
-  reva-container                  Build a docker container for reva, the storage
+  reva-up                         Up all reva based containers
+  reva-rebuild                    Rebuild and restart all reva based containers
+  reva-authsvc-up                 Up the authsvc
+  reva-authsvc-rebuild            Rebuild and restart the authsvc
+  reva-authsvc-restart            Restart the authsvc
+  reva-authsvc-down               Down the authsvc
+  reva-ocdavsvc-up                Up the ocdavsvc
+  reva-ocdavsvc-rebuild           Rebuild and restart the ocdavsvc
+  reva-ocdavsvc-restart           Restart the ocdavsvc
+  reva-ocdavsvc-down              Down the ocdavsvc
+  reva-ocssvc-up                  Up the ocssvc
+  reva-ocssvc-rebuild             Rebuild and restart the ocssvc
+  reva-ocssvc-restart             Restart the ocssvc
+  reva-ocssvc-down                Down the ocssvc
+  reva-storageprovidersvc-up      Up the storageprovidersvc
+  reva-storageprovidersvc-rebuild Rebuild and restart the storageprovidersvc
+  reva-storageprovidersvc-restart Restart the storageprovidersvc
+  reva-storageprovidersvc-down    Down the storageprovidersvc
   reva-src                        Get reva sources
+
+tests:
+  test-litmus                     run litmus tests - requires an instance with basic auth credential strategy
 
 ```
 
@@ -88,24 +118,23 @@ Have a look at the `Makefile` for how things are done exactly.
 
 1. `./build/*` contains `Dockerfile`s and a `src` folder for additional components, eg. reva and phoenix
 2. `./configs` contains all the configuration files for started services
-3. `./docs`
-4. `./examples` contains example data, eg. ldap users and a reva `data` folder
-
-While phoenix has a `Dockerfile` we use `./build/phoenix/Dockerfile` to start a container for development.
+3. `./deploy`  contains all docker compose yml files
+4. `./docs`
+5. `./examples` contains example data, eg. ldap users and a reva `data` folder
 
 # Testing
 
 1. point your browser to https://owncloud.localhost:8443/
 2. you should be redirected to https://owncloud.localhost:8443/phoenix/ and see an authorize button, click it
-3. you should be redirected to kopano, log in as aaliyah_abernathy:secret
+3. you should be redirected to kopano, log in as `aaliyah_adams:secret`
 4. you should be redirected back to phoenix and see the welcome.txt file
 
 ## reva / webdav with curl
 
-After `make future` you should be able to run a propfind
+After `make future` you should be able to run a propfind using basic auth against the 8444 port:
 
 ```
-curl 'https://owncloud.localhost:8443/reva/ocdav/remote.php/webdav' -X PROPFIND -H 'Depth: 1' --data-binary $'<?xml version="1.0"?>\n<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">\n  <d:prop>\n   <d:getetag />\n    <oc:fileid />\n    <oc:permissions />\n    <oc:size />\n  </d:prop>\n</d:propfind>' --compressed -k -u aaliyah_adams:secret
+curl 'https://owncloud.localhost:8444/remote.php/webdav' -X PROPFIND -H 'Depth: 1' --data-binary $'<?xml version="1.0"?>\n<d:propfind  xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">\n  <d:prop>\n   <d:getetag />\n    <oc:fileid />\n    <oc:permissions />\n    <oc:size />\n  </d:prop>\n</d:propfind>' --compressed -k -u aaliyah_adams:secret
 ```
 
 ## kopano
@@ -124,7 +153,7 @@ It will forward you to https://owncloud.localhost:8443/signin/v1/identifier?flow
 
 # Development
 
-reva and phoenix are both build inside docker containers. You can use them for development.
+FIXME reva and phoenix are both built inside docker containers. You can use them for development.
 
 ## reva
 
