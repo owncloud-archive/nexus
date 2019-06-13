@@ -7,7 +7,7 @@ FROM golang:${GO_VERSION}-alpine AS builder
 
 # Install the Certificate-Authority certificates for the app to be able to make
 # calls to HTTPS endpoints.
-RUN apk add --no-cache --update alpine-sdk git ca-certificates gcc
+RUN apk add --no-cache --update alpine-sdk git ca-certificates gcc acl-dev
 
 # Set the working directory outside $GOPATH to enable the support for modules.
 WORKDIR /src

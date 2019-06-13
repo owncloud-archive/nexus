@@ -51,6 +51,18 @@ enable_cors = true
 
 [http.services.ocssvc]
 prefix = "ocs"
+publicshareprovidersvc = "" # "" = disabled
+usershareprovidersvc = "127.0.0.1:9999"
+user_manager = "ldap"
+
+[http.services.ocssvc.user_managers.ldap]
+hostname = "127.0.0.1"
+port = 8636
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s*))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
+
 [http.services.ocssvc.config]
 version = "1.8"
 website = "nexus"
@@ -138,7 +150,7 @@ access_log = "stderr"
 #tls_enabled = true
 #tls_cert = "/etc/gridsecurity/host.cert"
 #tls_key = "/etc/gridsecurity/host.key"
-enabled_services = ["authsvc", "shareregistrysvc", "storageprovidersvc"]
+enabled_services = ["authsvc", "usershareprovidersvc", "storageprovidersvc"]
 enabled_interceptors = ["auth", "prometheus", "log", "trace"]
 
 
@@ -198,16 +210,6 @@ filter = "(&(objectclass=inetorgperson)(uid=%s))"
 bind_username = "cn=admin,dc=owncloudqa,dc=com"
 bind_password = "admin"
 
-
-[grpc.services.shareregistrysvc]
-driver = "static"
-
-[grpc.services.shareregistrysvc.drivers.static.types]
-foo = "bar"
-SHARE_TYPE_USER = "0.0.0.0:9999"
-SHARE_TYPE_PUBLIC_LINK = "0.0.0.0:9999"
-
-
 [grpc.services.storageprovidersvc]
 driver = "local"
 mount_path = "/"
@@ -221,3 +223,9 @@ unset = 1000
 [grpc.services.storageprovidersvc.drivers.local]
 root = "/data"
 watch = true
+
+[grpc.services.usershareprovidersvc]
+driver = "local"
+
+[grpc.services.usershareprovidersvc.drivers.local]
+root = "/data"
