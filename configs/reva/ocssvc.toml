@@ -43,6 +43,9 @@ header = "X-Access-Token"
 
 [http.services.ocssvc]
 prefix = ""
+publicshareprovidersvc = "" # "" = disabled
+usershareprovidersvc = "storageprovidersvc:9999"
+
 [http.services.ocssvc.config]
 version = "1.8"
 website = "nexus"
@@ -113,43 +116,3 @@ minor = 0
 micro = 11
 string = "10.0.11"
 
-[grpc]
-network = "tcp"
-address = "0.0.0.0:9999"
-access_log = "stderr"
-#tls_enabled = true
-#tls_cert = "/etc/gridsecurity/host.cert"
-#tls_key = "/etc/gridsecurity/host.key"
-enabled_services = ["shareregistrysvc"]
-enabled_interceptors = ["auth", "prometheus", "log", "trace"]
-
-[grpc.interceptors.trace]
-priority = 100
-header = "x-trace"
-
-[grpc.interceptors.log]
-priority = 200
-
-[grpc.interceptors.prometheus]
-priority = 300
-
-[grpc.interceptors.auth]
-priority = 400
-# TODO grpc 'headers' are stored as google.golang.org/grpc/metadata ... needs better naming, this is too confusing
-# keys for grpc metadata are always lowercase, so interceptors headers need to use lowercase.
-header = "x-access-token"
-token_strategy = "header"
-token_manager = "jwt"
-
-[grpc.interceptors.auth.token_strategies.header]
-header = "X-Access-Token"
-
-[grpc.interceptors.auth.token_managers.jwt]
-secret = "Pive-Fumkiu4"
-
-[grpc.services.shareregistrysvc]
-driver = "static"
-
-[grpc.services.shareregistrysvc.drivers.static.types]
-SHARE_TYPE_USER = "storageprovidersvc:9999"
-#SHARE_TYPE_PUBLIC_LINK = "storageprovidersvc:9999"

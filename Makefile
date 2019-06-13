@@ -387,18 +387,26 @@ start-eos: eos-src ##@eos Start EOS services
 	# EOS_SYNCTIME_ACCOUNTING=1 enables mtime propagation
 	#  - needs the sys.mtime.propagation=1 on a home dir, see below
 	#  - sys.allow.oc.sync=1 is not needed, it is an option for the eos built in webdav endpoint
-	# for now, we patch the start_servicas.sh
-	sed -e "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --env EOS_NS_ACCOUNTING=1 --env EOS_SYNCTIME_ACCOUNTING=1 --net/" ./build/eos-docker/src/scripts/start_services.sh > ./build/eos-docker/src/scripts/start_services.sh.tmp
-	mv ./build/eos-docker/src/scripts/start_services.sh.tmp ./build/eos-docker/src/scripts/start_services.sh
-	chmod +x ./build/eos-docker/src/scripts/start_services.sh
-	./build/eos-docker/src/scripts/start_services.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
+	# for now, we patch the start_servicas.sh and use that
+	sed -e "s/--name eos-mgm-test --net/--name eos-mgm-test --env EOS_UTF8=1 --env EOS_NS_ACCOUNTING=1 --env EOS_SYNCTIME_ACCOUNTING=1 --net/" ./build/eos-docker/src/scripts/start_services.sh > ./build/eos-docker/src/scripts/start_services_nexus.sh
+	chmod +x ./build/eos-docker/src/scripts/start_services_nexus.sh
+	# TODO update eos to 4.4.47 ... or whatever is up to date: see https://gitlab.cern.ch/dss/eos/tags
+	./build/eos-docker/src/scripts/start_services_nexus.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
 	# TODO find a way to provision users on the fly, via ldap?
+	# - in eos-docker.cf the env vars ED_MGM_LDAP ED_MGM_LDAP_SERVER and ED_MGM_LDAP_BASE need to be configured
+	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_abernathy
 	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_adams
+	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_anderson
+	
 	# make daemon the owner of the file ...
 	# TODO clarify: the sss auth seems to force user daemon to do everything, eos -r 0 0 or eos -r 1500 1500 does not change the actual user
+	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_abernathy
 	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_adams
-	# enable mtime propagation for aaliyah_adams home dir
+	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_anderson
+	# enable mtime propagation for home dirs
+	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_abernathy
 	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_adams
+	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_anderson
 
 stop-eos: eos-src ##@eos Stop EOS services
 	./build/eos-docker/src/scripts/shutdown_services.sh
