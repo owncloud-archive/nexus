@@ -46,8 +46,9 @@ CURRENT_UID := $(shell id -u):$(shell id -g)
 # for easier switching between branches you can set the branches as as env vars
 # by running `make REVA_BRANCH=bugfix/x PHOENIX_BRANCH=feature/y future`
 # ?! allows 
-REVA_BRANCH ?= nexus
-PHOENIX_BRANCH ?= master
+# TODO use tags in those repos?
+REVA_BRANCH ?= feature/ocs/shares
+PHOENIX_BRANCH ?= fix/dockerbuild
 
 # *****************************************************************************
 # * H E L P   M E C H A N I S M
