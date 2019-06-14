@@ -1,7 +1,8 @@
 # Build the reva code
 ARG GO_VERSION=1.12
 FROM golang:${GO_VERSION}
-#RUN apk add --no-cache --update alpine-sdk git ca-certificates gcc
+# add acl dev libs
+RUN apt-get update && apt-get install -y libacl1-dev
 WORKDIR /src
 COPY ./src/go.mod ./src/go.sum ./
 RUN go mod download
@@ -11,9 +12,13 @@ RUN CGO_ENABLE=0 cd cmd/revad && go build
 # Run the reva d contianer in a new image with eos binary / xrootd binary and auth tools
 FROM gitlab-registry.cern.ch/dss/eos:4.4.25
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
-# Install LDAP PAM Tools / auth
-RUN useradd aaliyah_adams -p secret -u 1500
+
+# allow resolving users via ldap
+RUN yum install -y nss-pam-ldapd nscd authconfig
+RUN authconfig --enableldap --enableldapauth --ldapserver="openldap" --ldapbasedn="dc=owncloudqa,dc=com" --update
+RUN sed -i "s/#binddn cn=.*/binddn cn=admin,dc=owncloudqa,dc=com/" /etc/nslcd.conf
+RUN sed -i "s/#bindpw .*/bindpw admin/" /etc/nslcd.conf
+
 # Add the revad binary from build image
 COPY --from=0 /src/cmd/revad/revad /src/cmd/revad/revad
-#RUN yum install -y nss-pam-ldapd nscd
-CMD ["rm -f /tmp/reva.pid && /src/cmd/revad/revad -c /etc/revad/revad.toml"]
+CMD ["rm -f /tmp/reva.pid && nslcd && /src/cmd/revad/revad -c /etc/revad/revad.toml"]

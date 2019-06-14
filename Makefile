@@ -46,8 +46,9 @@ CURRENT_UID := $(shell id -u):$(shell id -g)
 # for easier switching between branches you can set the branches as as env vars
 # by running `make REVA_BRANCH=bugfix/x PHOENIX_BRANCH=feature/y future`
 # ?! allows 
-REVA_BRANCH ?= nexus
-PHOENIX_BRANCH ?= master
+# TODO use tags in those repos?
+REVA_BRANCH ?= feature/ocs/shares
+PHOENIX_BRANCH ?= fix/dockerbuild
 
 # *****************************************************************************
 # * H E L P   M E C H A N I S M
@@ -392,21 +393,40 @@ start-eos: eos-src ##@eos Start EOS services
 	chmod +x ./build/eos-docker/src/scripts/start_services_nexus.sh
 	# TODO update eos to 4.4.47 ... or whatever is up to date: see https://gitlab.cern.ch/dss/eos/tags
 	./build/eos-docker/src/scripts/start_services_nexus.sh -i gitlab-registry.cern.ch/dss/eos:4.4.25 -n 1
-	# TODO find a way to provision users on the fly, via ldap?
-	# - in eos-docker.cf the env vars ED_MGM_LDAP ED_MGM_LDAP_SERVER and ED_MGM_LDAP_BASE need to be configured
+
+	# Allow resolving uids against ldap
+	docker exec -i eos-mgm-test yum install -y nss-pam-ldapd nscd authconfig
+	docker exec -i eos-mgm-test authconfig --enableldap --enableldapauth --ldapserver="openldap" --ldapbasedn="dc=owncloudqa,dc=com" --update
+	docker exec -i eos-mgm-test sed -i "s/#binddn cn=.*/binddn cn=admin,dc=owncloudqa,dc=com/" /etc/nslcd.conf
+	docker exec -i eos-mgm-test sed -i "s/#bindpw .*/bindpw admin/" /etc/nslcd.conf
+	docker exec -i eos-mgm-test nslcd
+
+	# TODO allow creating homes on the fly?
 	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_abernathy
 	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_adams
 	docker exec -i eos-mgm-test eos mkdir eos/dockertest/aaliyah_anderson
 	
-	# make daemon the owner of the file ...
+	# make daemon the owner of the file?
 	# TODO clarify: the sss auth seems to force user daemon to do everything, eos -r 0 0 or eos -r 1500 1500 does not change the actual user
-	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_abernathy
-	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_adams
-	docker exec -i eos-mgm-test eos chown 2:99 eos/dockertest/aaliyah_anderson
+	# make users own the dirs
+	docker exec -i eos-mgm-test eos chown 10003:1000 eos/dockertest/aaliyah_abernathy
+	docker exec -i eos-mgm-test eos chown 10004:1000 eos/dockertest/aaliyah_adams
+	docker exec -i eos-mgm-test eos chown 10009:1000 eos/dockertest/aaliyah_anderson
+
+	# set sticky bit so new files are owned by the users group
+	docker exec -i eos-mgm-test eos chmod 2775 eos/dockertest/aaliyah_abernathy
+	docker exec -i eos-mgm-test eos chmod 2775 eos/dockertest/aaliyah_adams
+	docker exec -i eos-mgm-test eos chmod 2775 eos/dockertest/aaliyah_anderson
+
 	# enable mtime propagation for home dirs
 	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_abernathy
 	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_adams
 	docker exec -i eos-mgm-test eos attr set sys.mtime.propagation=1 eos/dockertest/aaliyah_anderson
+
+	# allow storageprovidersvc to set acls on behalf of users
+	docker exec -i eos-mgm-test eos vid add gateway storageprovidersvc
+	#TODO(jfd) this needs proper auth check
+	docker exec -i eos-mgm-test eos vid set membership 0 +sudo
 
 stop-eos: eos-src ##@eos Stop EOS services
 	./build/eos-docker/src/scripts/shutdown_services.sh

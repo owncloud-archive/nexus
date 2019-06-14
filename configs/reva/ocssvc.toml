@@ -45,6 +45,16 @@ header = "X-Access-Token"
 prefix = ""
 publicshareprovidersvc = "" # "" = disabled
 usershareprovidersvc = "storageprovidersvc:9999"
+storageprovidersvc = "storageprovidersvc:9999"
+user_manager = "ldap"
+
+[http.services.ocssvc.user_managers.ldap]
+hostname = "openldap"
+port = 636
+base_dn = "dc=owncloudqa,dc=com"
+filter = "(&(objectclass=inetorgperson)(uid=%s*))"
+bind_username = "cn=admin,dc=owncloudqa,dc=com"
+bind_password = "admin"
 
 [http.services.ocssvc.config]
 version = "1.8"
