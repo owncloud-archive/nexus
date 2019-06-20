@@ -47,8 +47,8 @@ CURRENT_UID := $(shell id -u):$(shell id -g)
 # by running `make REVA_BRANCH=bugfix/x PHOENIX_BRANCH=feature/y future`
 # ?! allows 
 # TODO use tags in those repos?
-REVA_BRANCH ?= master
-PHOENIX_BRANCH ?= master
+REVA_BRANCH ?= nexus
+PHOENIX_BRANCH ?= nexus
 
 # *****************************************************************************
 # * H E L P   M E C H A N I S M
