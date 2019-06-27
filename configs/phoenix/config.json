@@ -1,14 +1,19 @@
 {
-  "server" : "https://owncloud.localhost:8443/",
+  "server" : "https://reva.nexus.test/",
   "theme": "owncloud",
   "version": "0.1.0",
-  "auth": {
-    "clientId": "ownCloud",
-    "metaDataUrl": "https://owncloud.localhost:8443/.well-known/openid-configuration",
-    "url": "https://owncloud.localhost:8443/"
+  "openIdConnect": {
+    "authority": "https://oidc-provider.nexus.test/",
+    "metadataUrl": "https://oidc-provider.nexus.test/.well-known/openid-configuration",
+    "client_id": "ownCloud",
+    "client_secret": "secret",
+    "response_type": "code",
+    "scope": "openid profile email",
+    "extraQueryParams": {
+      "claims": "{\"userinfo\":{\"name\":{\"essential\":true},\"preferred_username\":{\"essential\":true},\"email\":{\"essential\":true},\"email_verified\":{\"essential\":true},\"picture\":null}}"
+    }
   },
   "apps" : [
     "files", "markdown-editor","pdf-viewer"
   ]
 }
-

@@ -9,7 +9,7 @@ level = "debug"
 [http]
 enabled_services = ["ocssvc"]
 #enabled_middlewares = ["log", "trace", "auth", "cors"]
-enabled_middlewares = ["log", "trace", "auth"]
+enabled_middlewares = ["log", "trace", "auth", "cors"]
 network = "tcp"
 address = "0.0.0.0:9998"
 
@@ -30,6 +30,13 @@ token_manager = "jwt"
 
 [http.middlewares.cors]
 priority = 400
+# allow remote access
+allowed_origins = ["*"]
+allow_credentials = true
+# default is POST and GET
+# allowed_methods = ["POST", "GET", "OPTIONS"]
+# the default cors headers
+allowed_headers = ["Origin", "Accept", "Content-Type", "X-Requested-With", "Authorization", "Ocs-Apirequest"]
 
 [http.middlewares.auth.token_managers.jwt]
 secret = "Pive-Fumkiu4"
@@ -59,7 +66,7 @@ bind_password = "admin"
 [http.services.ocssvc.config]
 version = "1.8"
 website = "nexus"
-host = "https://owncloud.localhost:8443"
+host = "https://reva.nexus.test"
 contact = "admin@owncloud.localhost"
 ssl = "true"
 [http.services.ocssvc.capabilities.capabilities.core]

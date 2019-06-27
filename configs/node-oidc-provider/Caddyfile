@@ -1,0 +1,13 @@
+
+oidc-provider.nexus.test:443 {
+	errors stderr
+	log stdout
+
+	tls /etc/ssl/nexus.crt /etc/ssl/nexus.key
+
+	#node-oidc-provider
+	proxy / node-oidc-provider:3000 {
+        	transparent
+	}
+
+}

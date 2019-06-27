@@ -55,18 +55,9 @@ user_manager = "oidc"
 [grpc.services.authsvc.token_managers.jwt]
 secret = "Pive-Fumkiu4"
 
-[grpc.services.authsvc.auth_managers.ldap]
-hostname = "openldap"
-port = 636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
-
-[grpc.services.authsvc.user_managers.ldap]
-hostname = "openldap"
-port = 636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
+[grpc.services.authsvc.auth_managers.oidc]
+provider = "https://oidc-provider.nexus.test"
+insecure = true
+# the client credentials for the token introspection beckchannel
+client_id = "reva"
+client_secret = "secret"

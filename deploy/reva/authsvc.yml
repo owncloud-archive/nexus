@@ -6,7 +6,7 @@ services:
     build:
       context: ../build/reva
       dockerfile: Dockerfile
-    container_name: authsvc
+    hostname: authsvc.nexus.test
     volumes:
       - ../configs/reva/authsvc.toml:/etc/revad/revad.toml
     networks:

@@ -1,0 +1,13 @@
+version: '3'
+services:
+
+  # Overall proxy for all http requests
+  caddy-cloud:
+    image: abiosoft/caddy:no-stats
+    hostname: cloud.nexus.test
+    volumes:
+      - ../configs/phoenix/Caddyfile:/etc/Caddyfile:ro
+      - ../configs/ssl/nexus.crt:/etc/ssl/nexus.crt:ro
+      - ../configs/ssl/nexus.key:/etc/ssl/nexus.key:ro
+    networks:
+      ocis:

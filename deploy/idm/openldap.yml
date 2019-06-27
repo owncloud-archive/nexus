@@ -4,7 +4,7 @@ services:
   # Identity source
   openldap:
     image: osixia/openldap:latest
-    container_name: openldap
+    hostname: openldap.nexus.test
     command: --copy-service
     environment:
       LDAP_ORGANISATION: "ownCloud GmbH."
@@ -24,5 +24,9 @@ services:
       - "8389:389"
       - "8636:636"
     networks:
-      - ocis
-      - eoscluster.cern.ch
+      ocis:
+        aliases:
+          - openldap.nexus.test
+      eoscluster.cern.ch:
+        aliases:
+          - openldap

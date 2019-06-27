@@ -1,0 +1,15 @@
+
+reva.nexus.test:443 {
+	errors stderr
+	log stdout
+
+	tls /etc/ssl/nexus.crt /etc/ssl/nexus.key
+
+	proxy /ocs/ ocssvc.nexus.test:9998 {
+		without /ocs
+	}
+
+	proxy / ocdavsvc.nexus.test:9998 {
+        	transparent
+	}
+}

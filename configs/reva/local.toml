@@ -46,6 +46,7 @@ header = "X-Access-Token"
 [http.services.ocdavsvc]
 prefix = ""
 chunk_folder = "/var/tmp/owncloud/chunks"
+storageregistrysvc = "127.0.0.1:9999"
 storageprovidersvc = "127.0.0.1:9999"
 enable_cors = true
 
@@ -53,21 +54,17 @@ enable_cors = true
 prefix = "ocs"
 publicshareprovidersvc = "" # "" = disabled
 usershareprovidersvc = "127.0.0.1:9999"
-user_manager = "ldap"
+storageprovidersvc = "127.0.0.1:9999"
+user_manager = "json"
 
-[http.services.ocssvc.user_managers.ldap]
-hostname = "127.0.0.1"
-port = 8636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s*))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
+[http.services.ocssvc.user_managers.json]
+users = "users.json"
 
 [http.services.ocssvc.config]
 version = "1.8"
 website = "nexus"
-host = "https://owncloud.localhost:8443"
-contact = "admin@owncloud.localhost"
+host = "https://localhost:9998"
+contact = "admin@localhost"
 ssl = "true"
 [http.services.ocssvc.capabilities.capabilities.core]
 poll_interval = 60
@@ -134,12 +131,12 @@ micro = 11
 string = "10.0.11"
 
 [http.services.datasvc]
-driver = "local"
+driver = "owncloud"
 prefix = "data"
 temp_folder = "/var/tmp/"
 
-[http.services.datasvc.drivers.local]
-root = "/data"
+[http.services.datasvc.drivers.owncloud]
+datadirectory = "/data"
 
 ## authsvc part
 
@@ -150,7 +147,7 @@ access_log = "stderr"
 #tls_enabled = true
 #tls_cert = "/etc/gridsecurity/host.cert"
 #tls_key = "/etc/gridsecurity/host.key"
-enabled_services = ["authsvc", "usershareprovidersvc", "storageprovidersvc"]
+enabled_services = ["authsvc", "usershareprovidersvc", "storageregistrysvc", "storageprovidersvc"]
 enabled_interceptors = ["auth", "prometheus", "log", "trace"]
 
 
@@ -184,48 +181,42 @@ secret = "Pive-Fumkiu4"
 [grpc.services.authsvc]
 #auth_manager = "oidc"
 #user_manager = "oidc"
-auth_manager = "ldap"
-user_manager = "ldap"
+auth_manager = "json"
+user_manager = "json"
 token_manager = "jwt"
-
-#[grpc.services.authsvc.token_managers]
-#driver = "jwt"
 
 [grpc.services.authsvc.token_managers.jwt]
 secret = "Pive-Fumkiu4"
 
-[grpc.services.authsvc.auth_managers.ldap]
-hostname = "127.0.0.1"
-port = 8636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
+[grpc.services.authsvc.auth_managers.json]
+users = "users.json"
 
-[grpc.services.authsvc.user_managers.ldap]
-hostname = "127.0.0.1"
-port = 8636
-base_dn = "dc=owncloudqa,dc=com"
-filter = "(&(objectclass=inetorgperson)(uid=%s))"
-bind_username = "cn=admin,dc=owncloudqa,dc=com"
-bind_password = "admin"
+[grpc.services.authsvc.user_managers.json]
+users = "users.json"
+
+[grpc.services.storageregistrysvc]
+driver = "static"
+
+[grpc.services.storageregistrysvc.drivers.static.rules]
+"/" = "127.0.0.1:9999"
+"123e4567-e89b-12d3-a456-426655440000" = "127.0.0.1:9999"
+
 
 [grpc.services.storageprovidersvc]
-driver = "local"
+driver = "owncloud"
 mount_path = "/"
 mount_id = "123e4567-e89b-12d3-a456-426655440000"
-data_server_url = "http://owncloud.localhost:9998/data"
+data_server_url = "http://127.0.0.1:9998/data"
 
 [grpc.services.storageprovidersvc.available_checksums]
 md5   = 100
 unset = 1000
 
-[grpc.services.storageprovidersvc.drivers.local]
-root = "/data"
-watch = true
+[grpc.services.storageprovidersvc.drivers.owncloud]
+datadirectory = "/data"
 
 [grpc.services.usershareprovidersvc]
-driver = "local"
+driver = "owncloud"
 
-[grpc.services.usershareprovidersvc.drivers.local]
-root = "/data"
+[grpc.services.usershareprovidersvc.drivers.owncloud]
+datadirectory = "/data"

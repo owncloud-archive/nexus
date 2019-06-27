@@ -1,0 +1,35 @@
+[
+  {
+    "id": "SIMPLE_OIDC_USER_ALLIYAH_ABERNATHY",
+    "email": "aaliyah_abernathy@owncloudqa.com",
+    "email_verified": true,
+    "name": "Aaliyah Abernathy",
+    "preferred_username": "aaliyah_abernathy",
+    "first_name": "Aaliyah",
+    "given_name": "Abernathy",
+    "password": "secret",
+    "groups": ["Everyone", "Sales"]
+  },
+  {
+    "id": "SIMPLE_OIDC_USER_ALLIYAH_ADAMS",
+    "email": "aaliyah_adams@owncloudqa.com",
+    "email_verified": true,
+    "name": "Aaliyah Adams",
+    "preferred_username": "aaliyah_adams",
+    "first_name": "Aaliyah",
+    "given_name": "Adams",
+    "password": "secret",
+    "groups": ["Everyone", "Sales"]
+  },
+  {
+    "id": "SIMPLE_OIDC_USER_ALLIYAH_ANDERSON",
+    "email": "aaliyah_anderson@owncloudqa.com",
+    "email_verified": true,
+    "name": "Aaliyah Anderson",
+    "preferred_username": "aaliyah_anderson",
+    "first_name": "Aaliyah",
+    "given_name": "Anderson",
+    "password": "secret",
+    "groups": ["Everyone", "Support"]
+  }
+]

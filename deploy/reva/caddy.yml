@@ -1,0 +1,13 @@
+version: '3'
+services:
+
+  # Overall proxy for all http requests
+  caddy-reva:
+    image: abiosoft/caddy:no-stats
+    hostname: reva.nexus.test
+    volumes:
+      - ../configs/reva/Caddyfile:/etc/Caddyfile:ro
+      - ../configs/ssl/nexus.crt:/etc/ssl/nexus.crt:ro
+      - ../configs/ssl/nexus.key:/etc/ssl/nexus.key:ro
+    networks:
+      ocis:

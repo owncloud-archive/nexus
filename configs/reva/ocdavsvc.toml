@@ -31,6 +31,8 @@ skip_methods = ["/status.php"]
 
 [http.middlewares.cors]
 priority = 400
+allowed_origins = ["https://*.nexus.test"]
+allow_credentials = true
 
 [http.middlewares.auth.token_managers.jwt]
 secret = "Pive-Fumkiu4"

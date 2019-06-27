@@ -4,7 +4,7 @@ services:
   # Overall proxy for all http requests
   caddy:
     image: abiosoft/caddy:no-stats
-    container_name: caddy
+    hostname: caddy.nexus.test
     volumes:
       - ../configs/Caddyfile:/etc/Caddyfile
       - ../configs/ssl/owncloud.localhost.crt:/etc/ssl/owncloud.localhost.crt

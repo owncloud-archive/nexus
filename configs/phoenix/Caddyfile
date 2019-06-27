@@ -1,0 +1,14 @@
+
+cloud.nexus.test:443 {
+	errors stderr
+	log stdout
+
+	tls /etc/ssl/nexus.crt /etc/ssl/nexus.key
+
+	# fixme use nginx on port 443 to serve ...
+	# hm or better run yarn webserver on 3000?
+	proxy / phoenix.nexus.test:80 {
+        	transparent
+	}
+
+}

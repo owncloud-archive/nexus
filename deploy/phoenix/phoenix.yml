@@ -5,10 +5,12 @@ services:
   phoenix:
     build:
       context: ../build/phoenix/src
-    container_name: phoenix
+    hostname: phoenix.nexus.test
     environment:
-      SERVER_HOST: owncloud.localhost:8443
+      SERVER_HOST: phoenix.nexus.test
     volumes:
        - ../configs/phoenix/config.json:/usr/share/nginx/html/config.json:ro
     networks:
-      - ocis
+      ocis:
+        aliases:
+          - phoenix.nexus.test

@@ -1,0 +1,31 @@
+{
+    "idp_name": "https://oidc-provider.nexus.test",
+    "port": 3000,
+    "client_config": [
+        {
+          "client_id": "ownCloud",
+          "client_secret": "secret",
+          "response_type": "code",
+          "scope": "openid",
+          "token_endpoint_auth_method": "client_secret_post",
+          "redirect_uris": [
+            "https://cloud.nexus.test/oidc-callback.html"
+            ],
+            "post_logout_redirect_uris": [
+              "https://cloud.nexus.test/"
+            ]
+        },
+        {
+          "client_id": "reva",
+          "client_secret": "secret",
+          "grant_types": ["client_credentials"],
+          "redirect_uris": [],
+          "response_types": []
+        }
+    ],
+    "claim_mapping": {
+      "openid": [ "sub" ],
+      "email": [ "email", "email_verified" ],
+      "profile": [ "name", "nickname", "preferred_username" ]
+    }
+  }

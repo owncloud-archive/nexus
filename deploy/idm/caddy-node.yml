@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  # Overall proxy for all http requests
+  caddy-idm:
+    image: abiosoft/caddy:no-stats
+    hostname: oidc-provider.nexus.test
+    volumes:
+      - ../configs/node-oidc-provider/Caddyfile:/etc/Caddyfile:ro
+      - ../configs/ssl/nexus.crt:/etc/ssl/nexus.crt:ro
+      - ../configs/ssl/nexus.key:/etc/ssl/nexus.key:ro
+    networks:
+      ocis:
+        aliases:
+          - oidc-provider.nexus.test

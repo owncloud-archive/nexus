@@ -6,7 +6,7 @@ services:
     build:
       context: ../build/reva
       dockerfile: Dockerfile
-    container_name: ocdavsvc-basic
+    hostname: ocdavsvc-basic.nexus.test
     volumes:
       - ../configs/reva/ocdavsvc-basic.toml:/etc/revad/revad.toml
     #TODO use env vars to configure reva ... the diff to the oidc config is minimal
@@ -22,7 +22,7 @@ services:
     build:
       context: ../build/reva
       dockerfile: Dockerfile
-    container_name: authsvc-ldap
+    hostname: authsvc-ldap.nexus.test
     volumes:
       - ../configs/reva/authsvc-ldap.toml:/etc/revad/revad.toml
     #TODO use env vars to configure reva ... the diff to the oidc config is minimal

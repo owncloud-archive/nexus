@@ -4,13 +4,18 @@ services:
     build:
       context: ../build/reva
       dockerfile: Dockerfile.eosprovider
-    container_name:  storageprovidersvc
+    hostname: storageprovidersvc.nexus.test
     volumes:
       - ../configs/reva/storageprovider/eos.toml:/etc/revad/revad.toml
     networks:
       # For XrootD communication to EOS MGM5
-      - eoscluster.cern.ch
-      - ocis
+      eoscluster.cern.ch:
+        aliases:
+          - storageprovidersvc
+      ocis:
+        aliases:
+          - storageprovidersvc.nexus.test
+
 networks:
   # External network used in demo eos cluster setup 
   eoscluster.cern.ch:

@@ -9,7 +9,7 @@ owncloud.localhost:8443 {
 	tls /etc/ssl/owncloud.localhost.crt /etc/ssl/owncloud.localhost.key
 
 	# konnect oidc
-	proxy /.well-known/openid-configuration konnectd:8777
+	#proxy /.well-known/openid-configuration oidc-provider:8777
 	proxy /konnect/v1/jwks.json konnectd:8777
 	proxy /konnect/v1/token konnectd:8777
 	proxy /konnect/v1/userinfo konnectd:8777
@@ -20,6 +20,33 @@ owncloud.localhost:8443 {
 	proxy /signin/ konnectd:8777 {
 		transparent
 	}
+
+	#node-oidc-provider
+	proxy /.well-known/openid-configuration oidc-provider:8777 {
+        	transparent
+	}
+	proxy /auth oidc-provider:8777 {
+        	transparent
+	}
+	proxy /certs oidc-provider:8777 {
+        	transparent
+	}
+	proxy /reg oidc-provider:8777 {
+        	transparent
+	}
+	proxy /token oidc-provider:8777 {
+        	transparent
+	}
+	proxy /me oidc-provider:8777 {
+        	transparent
+	}
+	proxy /session oidc-provider:8777 {
+        	transparent
+	}
+	proxy /interaction oidc-provider:8777 {
+        	transparent
+	}
+
 
 	# TODO workaround for unprefixed image from phoenix
 	proxy /img/ phoenix:80 {

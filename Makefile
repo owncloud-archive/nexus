@@ -89,6 +89,13 @@ help: ##@other Show this help
 default: help
 
 # *****************************************************************************
+# * C E R T I F I C A T E S
+# *****************************************************************************
+
+certificate:
+	openssl req -x509 -newkey rsa:4096 -keyout configs/ssl/nexus.pem -out configs/ssl/nexus.crt -days 365 -subj '/CN=*.nexus.test' -nodes
+
+# *****************************************************************************
 # * N E T W O R K
 # *****************************************************************************
 # we create the ocis network manually so we can up and down services on the same network
@@ -113,6 +120,7 @@ demo: up ##@containers bring up a demo system
 idm-up:
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-konnectd.yml \
 	  -f deploy/idm/konnectd.yml \
 	  -f deploy/idm/openldap.yml \
 	  up -d
@@ -120,6 +128,7 @@ idm-up:
 idm-down:
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-konnectd.yml \
 	  -f deploy/idm/konnectd.yml \
 	  -f deploy/idm/openldap.yml \
 	  down
@@ -127,7 +136,33 @@ idm-down:
 idm-restart:
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-konnectd.yml \
 	  -f deploy/idm/konnectd.yml \
+	  -f deploy/idm/openldap.yml \
+	  restart
+
+
+idm-node-up:
+	docker-compose \
+	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
+	  -f deploy/idm/openldap.yml \
+	  up -d
+
+idm-node-down:
+	docker-compose \
+	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
+	  -f deploy/idm/openldap.yml \
+	  down
+
+idm-node-restart:
+	CURRENT_UID=$(CURRENT_UID) docker-compose \
+	  -f deploy/network.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
 	  -f deploy/idm/openldap.yml \
 	  restart
 
@@ -194,6 +229,7 @@ logs: ##@containers show and follow nexus container logs
 reva-up: reva-src ##@reva Up all reva based containers
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
@@ -201,9 +237,21 @@ reva-up: reva-src ##@reva Up all reva based containers
 	  -f deploy/reva/storageprovidersvc-eos.yml \
 	  up -d
 
+reva-down: reva-src ##@reva Down all reva based containers
+	docker-compose \
+	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
+	  -f deploy/reva/authsvc.yml \
+	  -f deploy/reva/ocdavsvc.yml \
+	  -f deploy/reva/ocssvc.yml \
+	  -f deploy/reva/reva-basic.yml \
+	  -f deploy/reva/storageprovidersvc-eos.yml \
+	  down
+
 reva-rebuild: reva-src ##@reva Rebuild and restart all reva based containers
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
@@ -242,24 +290,28 @@ reva-authsvc-down: ##@reva Down the authsvc
 reva-ocdavsvc-up: reva-src ##@reva Up the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  up -d
 
 reva-ocdavsvc-rebuild: reva-src ##@reva Rebuild and restart the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  up -d --build --force-recreate ocdavsvc
 
 reva-ocdavsvc-restart: reva-src ##@reva Restart the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  restart
 
 reva-ocdavsvc-down: ##@reva Down the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  down
 
@@ -268,24 +320,28 @@ reva-ocdavsvc-down: ##@reva Down the ocdavsvc
 reva-ocssvc-up: reva-src ##@reva Up the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  up -d
 
 reva-ocssvc-rebuild: reva-src ##@reva Rebuild and restart the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  up -d --build --force-recreate ocssvc
 
 reva-ocssvc-restart: reva-src ##@reva Restart the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  restart
 
 reva-ocssvc-down: ##@reva Down the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  down
 
@@ -340,24 +396,28 @@ build/reva/src:
 phoenix-up: phoenix-src ##@phoenix Up phoenix
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  up -d
 
 phoenix-down: ##@phoenix Down phoenix
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  down
 
 phoenix-restart: phoenix-src ##@phoenix Restart phoenix
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  restart
 
 phoenix-rebuild: phoenix-src ##@phoenix Rebuild and restart phoenix
 	docker-compose \
 	  -f deploy/network.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  up -d --no-deps --build --force-recreate phoenix
 
@@ -425,6 +485,8 @@ start-eos: eos-src ##@eos Start EOS services
 
 	# allow storageprovidersvc to set acls on behalf of users
 	docker exec -i eos-mgm-test eos vid add gateway storageprovidersvc
+	# hmmm this is fragile
+	docker exec -i eos-mgm-test eos vid add gateway deploy_storageprovidersvc_1
 	#TODO(jfd) this needs proper auth check
 	docker exec -i eos-mgm-test eos vid set membership 0 +sudo
 

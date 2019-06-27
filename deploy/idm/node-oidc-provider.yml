@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  # IDP
+  oidc-provider:
+    image: qlik/simple-oidc-provider
+    container_name: node-oidc-provider
+    hostname: node-oidc-provider.nexus.test
+    environment:
+      REDIRECTS: https://oidc-provider.nexus.test/phoenix/oidc-callback.html
+      PORT: 3000
+      IDP_NAME: https://oidc-provider.nexus.test
+      EXTERNAL_HOST_NAME: https://oidc-provider.nexus.test
+      CONFIG_FILE: /usr/src/app/config.json
+      USERS_FILE: /usr/src/app/users.json
+    volumes:
+      - ../configs/node-oidc-provider/config.json:/usr/src/app/config.json:ro
+      - ../configs/node-oidc-provider/users.json:/usr/src/app/users.json:ro
+    networks:
+      ocis:
+        aliases:
+          - node-oidc-provider

@@ -6,8 +6,10 @@ services:
     build:
       context: ../build/reva
       dockerfile: Dockerfile
-    container_name: ocdavsvc
+    hostname: ocdavsvc.nexus.test
     volumes:
       - ../configs/reva/ocdavsvc.toml:/etc/revad/revad.toml
     networks:
-      - ocis
+      ocis:
+        aliases:
+          - ocdavsvc.nexus.test

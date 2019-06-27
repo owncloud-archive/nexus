@@ -4,9 +4,9 @@ services:
   # IDP
   konnectd:
     image: kopano/konnectd:latest
-    container_name: konnectd
+    hostname: konnectd.nexus.test
     environment:
-      LDAP_URI: ldap://openldap:389
+      LDAP_URI: ldap://openldap.nexus.test:389
       LDAP_BINDDN: "cn=admin,dc=owncloudqa,dc=com"
       LDAP_BINDPW: "admin"
       LDAP_BASEDN: "dc=owncloudqa,dc=com"
@@ -19,12 +19,12 @@ services:
       LDAP_FILTER: "(objectClass=*)"
       IDENTIFIER_REGISTRATION_CONF: /etc/kopano/konnectd-identifier-registration.yaml
     volumes:
-      - ../configs/kopano/identifier-registration.yaml:/etc/kopano/konnectd-identifier-registration.yaml:ro
+      - ../configs/konnectd/identifier-registration.yaml:/etc/kopano/konnectd-identifier-registration.yaml:ro
       - ../configs/ssl/private-key.pem:/run/secrets/konnectd_signing_private_key:ro
-      - ../configs/kopano/konnectd-encryption-secret.key:/run/secrets/konnectd_encryption_secret:ro
+      - ../configs/konnectd/encryption-secret.key:/run/secrets/konnectd_encryption_secret:ro
     depends_on:
     - openldap
     command:
-      "konnectd serve --iss=https://owncloud.localhost:8443 --log-level=debug --identifier-registration-conf=/etc/kopano/konnectd-identifier-registration.yaml --signing-private-key=/run/secrets/konnectd_signing_private_key --signing-method RS256 ldap"
+      "konnectd serve --iss=https://oidc-provider.nexus.test --log-level=debug --identifier-registration-conf=/etc/kopano/konnectd-identifier-registration.yaml --signing-private-key=/run/secrets/konnectd_signing_private_key --signing-method RS256 ldap"
     networks:
-      - ocis
+      ocis:
