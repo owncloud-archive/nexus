@@ -117,7 +117,7 @@ demo: up ##@containers bring up a demo system
 # * I D E N T I T Y   M A N A G A M E N T
 # *****************************************************************************
 
-idm-up:
+idm-konnectd-up: ##@idm docker-compose up konnectd
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-konnectd.yml \
@@ -125,7 +125,7 @@ idm-up:
 	  -f deploy/idm/openldap.yml \
 	  up -d
 
-idm-down:
+idm-konnectd-down: ##@idm docker-compose down konnectd
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-konnectd.yml \
@@ -133,7 +133,7 @@ idm-down:
 	  -f deploy/idm/openldap.yml \
 	  down
 
-idm-restart:
+idm-konnectd-restart: ##@idm docker-compose restart konnectd
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-konnectd.yml \
@@ -142,7 +142,7 @@ idm-restart:
 	  restart
 
 
-idm-node-up:
+idm-node-up: ##@idm docker-compose up node-oidc-provider
 	docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-node.yml \
@@ -150,7 +150,7 @@ idm-node-up:
 	  -f deploy/idm/openldap.yml \
 	  up -d
 
-idm-node-down:
+idm-node-down: ##@idm docker-compose down node-oidc-provider
 	docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-node.yml \
@@ -158,7 +158,7 @@ idm-node-down:
 	  -f deploy/idm/openldap.yml \
 	  down
 
-idm-node-restart:
+idm-node-restart: ##@idm docker-compose restart node-oidc-provider
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
 	  -f deploy/idm/caddy-node.yml \
@@ -175,28 +175,32 @@ future: up ##@containers Start a development environment
 up: network-up storage-up reva-src phoenix-src ##@containers docker-compose up all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  -f deploy/idm/konnectd.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
 	  -f deploy/idm/openldap.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  -f deploy/reva/reva-basic.yml \
 	  -f deploy/reva/storageprovidersvc-eos.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  up -d
 
 down: stop-eos ##@containers docker-compose down all containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  -f deploy/idm/konnectd.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
 	  -f deploy/idm/openldap.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  -f deploy/reva/reva-basic.yml \
 	  -f deploy/reva/storageprovidersvc-eos.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  down
 	docker network rm ocis
@@ -204,14 +208,16 @@ down: stop-eos ##@containers docker-compose down all containers
 logs: ##@containers show and follow nexus container logs
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  -f deploy/idm/konnectd.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
 	  -f deploy/idm/openldap.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  -f deploy/reva/reva-basic.yml \
 	  -f deploy/reva/storageprovidersvc-eos.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  logs -f
 
@@ -290,28 +296,24 @@ reva-authsvc-down: ##@reva Down the authsvc
 reva-ocdavsvc-up: reva-src ##@reva Up the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  up -d
 
 reva-ocdavsvc-rebuild: reva-src ##@reva Rebuild and restart the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  up -d --build --force-recreate ocdavsvc
 
 reva-ocdavsvc-restart: reva-src ##@reva Restart the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  restart
 
 reva-ocdavsvc-down: ##@reva Down the ocdavsvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  down
 
@@ -320,28 +322,24 @@ reva-ocdavsvc-down: ##@reva Down the ocdavsvc
 reva-ocssvc-up: reva-src ##@reva Up the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  up -d
 
 reva-ocssvc-rebuild: reva-src ##@reva Rebuild and restart the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  up -d --build --force-recreate ocssvc
 
 reva-ocssvc-restart: reva-src ##@reva Restart the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  restart
 
 reva-ocssvc-down: ##@reva Down the ocssvc
 	docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  down
 
@@ -501,30 +499,6 @@ build/eos-docker/src:
 .PHONY: start-eos stop-eos
 
 # *****************************************************************************
-# * R E V E R S E   P R O X Y
-# *****************************************************************************
-# We currently use caddy a sa reverse proxy
-# TODO(jfd) allow swapping out services with local running ones
-
-proxy-up: 	
-	docker-compose \
-	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  up -d
-
-proxy-down: 	
-	docker-compose \
-	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  down
-
-proxy-restart:	
-	docker-compose \
-	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
-	  restart
-
-# *****************************************************************************
 # * C L E A N U P
 # *****************************************************************************
 
@@ -533,14 +507,17 @@ clean: clean-containers network-down clean-src ##@cleanup Cleanup containers, ne
 clean-containers: ##@cleanup Stop and cleanup containers
 	CURRENT_UID=$(CURRENT_UID) docker-compose \
 	  -f deploy/network.yml \
-	  -f deploy/caddy.yml \
+	  -f deploy/idm/caddy-node.yml \
+	  -f deploy/idm/node-oidc-provider.yml \
 	  -f deploy/idm/konnectd.yml \
 	  -f deploy/idm/openldap.yml \
+	  -f deploy/reva/caddy.yml \
 	  -f deploy/reva/authsvc.yml \
 	  -f deploy/reva/ocdavsvc.yml \
 	  -f deploy/reva/ocssvc.yml \
 	  -f deploy/reva/reva-basic.yml \
 	  -f deploy/reva/storageprovidersvc-eos.yml \
+	  -f deploy/phoenix/caddy.yml \
 	  -f deploy/phoenix/phoenix.yml \
 	  rm -s
 
