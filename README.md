@@ -1,20 +1,18 @@
-<aside class="warning">
-While nexus documents how to run reva with docker compose in a distributed way, integrating it with an OpenID COnnect Provider, LDAP and EOS as the storage layer, the focus in the last weeks has been or making development easier. Have a look at these central posts for what has been going on:
-
-- [**Nexus is hard, reva is easy … or it should be!**](https://central.owncloud.org/t/nexus-is-hard-reva-is-easy-or-it-should-be/21027)
-- [Nexus progress as Easter present!](https://central.owncloud.org/t/nexus-progress-as-easter-present/19760)
-- [Digging into the reva “Hello World!” example.md](https://central.owncloud.org/t/digging-into-the-reva-hello-world-example-md/19896)
-- [Supporting s3 in reva](https://central.owncloud.org/t/supporting-s3-in-reva/19512)
-- [MOVE: ownClouds worst nightmare!](https://central.owncloud.org/t/move-ownclouds-worst-nightmare/19388)
-- [**What is nexus? And where did it come from?**](https://central.owncloud.org/t/what-is-nexus-and-where-did-it-come-from/19270)
-- [Interesting problems that need to be solved](https://central.owncloud.org/t/interesting-problems-that-need-to-be-solved/19154)
-
-The recommended way to get started with OCIS development is currently to run reva and phoenix locally, which is now possible. If you are interested in large scale deployments the nexis makefile in this repo is still the best starting point.
-
-Cheers
-
-Jörn
-</aside>
+> While nexus documents how to run reva with docker compose in a distributed way, integrating it with an OpenID COnnect Provider, LDAP and EOS as the storage layer, the focus in the last weeks has been or making development easier. Have a look at these central posts for what has been going on:
+> 
+> - [**Nexus is hard, reva is easy … or it should be!**](https://central.owncloud.org/t/nexus-is-hard-reva-is-easy-or-it-should-be/21027)
+> - [Nexus progress as Easter present!](https://central.owncloud.org/t/nexus-progress-as-easter-present/19760)
+> - [Digging into the reva “Hello World!” example.md](https://central.owncloud.org/t/digging-into-the-reva-hello-world-example-md/19896)
+> - [Supporting s3 in reva](https://central.owncloud.org/t/supporting-s3-in-reva/19512)
+> - [MOVE: ownClouds worst nightmare!](https://central.owncloud.org/t/move-ownclouds-worst-nightmare/19388)
+> - [**What is nexus? And where did it come from?**](https://central.owncloud.org/t/what-is-nexus-and-where-did-it-come-from/19270)
+> - [Interesting problems that need to be solved](https://central.owncloud.org/t/interesting-problems-that-need-to-be-solved/19154)
+> 
+> The recommended way to get started with OCIS development is currently to run reva and phoenix locally, which is now possible. If you are interested in large scale deployments the nexis makefile in this repo is still the best starting point.
+> 
+> Cheers
+> 
+> Jörn
 
 # nexus
 
