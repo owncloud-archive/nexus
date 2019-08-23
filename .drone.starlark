@@ -39,21 +39,6 @@ def pipeline_build_reva():
         ]
     }
 
-    step_publish_daily = {
-        'name': 'publish-daily',
-        'image': 'plugins/github-release',
-        'settings': {
-            'prerelease': True,
-            'api_key': { 'from_secret': 'github_token'},
-            'overwrite': True,
-            'files': [base_dir + 'release/*'],
-            'title': 'reva-daily',
-        },
-        'when': {
-            'ref': [ 'refs/tags/**' ],
-        },
-    }
-
     return {
         'kind': 'pipeline',
         'name': 'build-reva',
@@ -61,12 +46,56 @@ def pipeline_build_reva():
             step_build,
             step_exec,
             step_checksum,
-            step_publish_daily
         ],
     }
 
 
+def pipeline_release_reva():
+    base_dir = './build/reva'
+
+    step_publish_release = {
+        'name': 'publish-daily',
+        'image': 'plugins/github-release',
+        'settings': {
+            'api_key': { 'from_secret': 'github_token'},
+            'overwrite': True,
+            'files': [base_dir + '/release/*'],
+            'title': "${DRONE_TAG}",
+        },
+        'when': {
+            'ref': [ 'refs/tags/**' ],
+        },
+    }
+
+    step_publish_daily = {
+        'name': 'publish-daily',
+        'image': 'plugins/github-release',
+        'settings': {
+            'prerelease': True,
+            'api_key': { 'from_secret': 'github_token'},
+            'overwrite': True,
+            'files': [base_dir + '/release/*'],
+            'title': 'reva-daily',
+        },
+        'when': {
+            'cron': [ 'daily' ],
+        },
+    }
+
+    return {
+        'kind': 'pipeline',
+        'name': 'publish-reva',
+        'steps': [
+            step_publish_release,
+            step_publish_daily,
+        ],
+        'depends_on': [
+            "build-reva",
+        ],
+    }
+
 def main():
     return [
         pipeline_build_reva(),
+        pipeline_release_reva()
     ]
