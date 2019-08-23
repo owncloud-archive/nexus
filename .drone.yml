@@ -49,7 +49,7 @@ steps:
     api_key:
       from_secret: github_token
     files:
-    - "./build/reva/release/*"
+    - build/reva/release/*
     overwrite: true
     title: "${DRONE_TAG}"
 
