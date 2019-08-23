@@ -54,7 +54,8 @@ def pipeline_build():
         'kind': 'pipeline',
         'name': 'build-reva',
         'workspace': {
-            'base': '/drone/scr/build/reva'
+            'base': '/drone/src/',
+            'path': 'build/reva'
         },
         'steps': [
             step_build,
