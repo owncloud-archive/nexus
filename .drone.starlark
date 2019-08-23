@@ -14,9 +14,9 @@ def pipeline_build_reva():
             'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
             'go get -u golang.org/x/tools/cmd/goimports',
             'cd ' + base_dir + '/src',
-            'go build ./...'
+            'go build ./...',
             'go mod tidy',
-            "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o ../release/revad",
+            "go build -v -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o ../release/revad ./cmd/revad"
         ]
     }
 

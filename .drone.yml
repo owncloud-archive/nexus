@@ -14,8 +14,10 @@ steps:
   - go get -u golang.org/x/lint/golint
   - go get github.com/golangci/golangci-lint/cmd/golangci-lint
   - go get -u golang.org/x/tools/cmd/goimports
+  - cd ./build/reva/src
+  - go build ./...
   - go mod tidy
-  - "cd ./build/reva/src && go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o ../release/revad"
+  - "go build -v -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o ../release/revad ./cmd/revad"
   environment:
     CGO_ENABLED: 0
     GO111MODULE: on
