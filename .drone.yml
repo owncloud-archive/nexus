@@ -25,7 +25,7 @@ steps:
 - name: executable
   image: golang:1.12
   commands:
-  - ./build/reva/release/revad --help
+  - ./build/reva/release/revad -t
 
 - name: checksum
   image: alpine

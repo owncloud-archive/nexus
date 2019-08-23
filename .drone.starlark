@@ -20,11 +20,13 @@ def pipeline_build_reva():
         ]
     }
 
+    ## use -t instead of --help or -version as a workaround
+    ## because thats the only parameter which returns rc 0
     step_exec = {
         'name': 'executable',
         'image': 'golang:1.12',
         'commands': [
-            base_dir + '/release/revad --help'
+            base_dir + '/release/revad -t'
         ]
     }
 
