@@ -42,5 +42,8 @@ steps:
     - "./build/reva/release/*"
     overwrite: true
     title: "${DRONE_TAG}"
+  when:
+    ref:
+    - "refs/tags/**"
 
 ...
