@@ -1,4 +1,6 @@
-def pipeline_build():
+def pipeline_build_reva():
+    base_dir = './build/reva'
+
     step_build = {
         'name': 'build',
         'image': 'golang:1.12',
@@ -7,14 +9,12 @@ def pipeline_build():
             'GO111MODULE': 'on',
         },
         'commands': [
-            'pwd',
-            'ls -l',
-            'git clone https://github.com/cs3org/reva/ src/',
-            # 'go get -u golang.org/x/lint/golint',
-            # 'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
-            # 'go get -u golang.org/x/tools/cmd/goimports',
-            # 'go mod tidy',
-            "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o release/revad",
+            'git clone https://github.com/cs3org/reva/ ' + base_dir + '/src/',
+            'go get -u golang.org/x/lint/golint',
+            'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
+            'go get -u golang.org/x/tools/cmd/goimports',
+            'go mod tidy',
+            "cd " + base_dir + "/src && go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o ../release/revad",
         ]
     }
 
@@ -22,7 +22,7 @@ def pipeline_build():
         'name': 'executable',
         'image': 'golang:1.12',
         'commands': [
-            './release/revad --help'
+            base_dir + '/release/revad --help'
         ]
     }
 
@@ -31,7 +31,7 @@ def pipeline_build():
         'image': 'alpine',
         'commands': [
             'apk add --no-cache coreutils',
-            'sha256sum -b release/* > release/sha256sum.txt'
+            'sha256sum -b ' + base_dir + '/release/* > ' + base_dir + '/release/sha256sum.txt'
         ]
     }
 
@@ -42,7 +42,7 @@ def pipeline_build():
         'settings': {
             'api_key': { 'from_secret': 'github_token'},
             'overwrite': True,
-            'files': ['release/*'],
+            'files': [base_dir + 'release/*'],
             'title': '${DRONE_TAG}',
         },
         'when': {
@@ -53,10 +53,6 @@ def pipeline_build():
     return {
         'kind': 'pipeline',
         'name': 'build-reva',
-        'workspace': {
-            'base': '/drone/src/',
-            'path': 'build/reva'
-        },
         'steps': [
             step_build,
             step_exec,
@@ -68,5 +64,5 @@ def pipeline_build():
 
 def main():
     return [
-        pipeline_build(),
+        pipeline_build_reva(),
     ]
