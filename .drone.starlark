@@ -1,0 +1,65 @@
+def pipeline_build():
+    step_build = {
+        'name': 'build',
+        'image': 'golang:1.12',
+        'environment': {
+            'CGO_ENABLED': '0',
+            'GO111MODULE': 'on',
+        },
+        'commands': [
+            'go get -u golang.org/x/lint/golint',
+            'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
+            'go get -u golang.org/x/tools/cmd/goimports',
+            'go mod tidy',
+            "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o release/revad",
+        ]
+    }
+
+    step_exec = {
+        'name': 'executable'
+        'image': 'golang:1.12'
+        'commands': [
+            './release/revad --help'
+        ]
+    }
+
+    step_checksum = {
+        'name': 'checksum',
+        'image': 'alpine',
+        'commands': [
+            'apk add --no-cache coreutils',
+            'sha256sum -b release/* > release/sha256sum.txt'
+        ]
+    }
+
+    step_publish = {
+        'name': 'publish',
+        'image': 'plugins/github-release',
+        'pull': 'always',
+        'settings': {
+            'api_key': { 'from_secret': 'github_token'},
+            'overwrite': True,
+            'files': ['release/*'],
+            'title': '${DRONE_TAG}',
+        },
+        'when': {
+            'ref': [ 'refs/tags/**' ],
+        },
+    }
+
+    return {
+        'kind': 'pipeline',
+        'name': 'build',
+        'steps': [
+            step_build,
+            step_exec,
+            step_checksum,
+            step_publish
+        ]
+    }
+
+
+def main():
+    return [
+        pipeline_build(),
+    ]
