@@ -62,9 +62,6 @@ def pipeline_release_reva():
             'files': [base_dir + '/release/*'],
             'title': "${DRONE_TAG}",
         },
-        'when': {
-            'ref': [ 'refs/tags/**' ],
-        },
     }
 
     # step_publish_daily = {
@@ -92,6 +89,9 @@ def pipeline_release_reva():
         'depends_on': [
             "build-reva",
         ],
+        'trigger': {
+            'ref': [ 'refs/tags/**' ],
+        },
     }
 
 def main():

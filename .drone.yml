@@ -51,20 +51,10 @@ steps:
     - "./build/reva/release/*"
     overwrite: true
     title: "${DRONE_TAG}"
-  when:
-    ref:
-    - "refs/tags/**"
 
-- name: publish-daily
-  image: plugins/github-release
-  settings:
-    api_key:
-      from_secret: github_token
-    files:
-    - "./build/reva/release/*"
-    overwrite: true
-    prerelease: true
-    title: reva-daily
+trigger:
+  ref:
+  - "refs/tags/**"
 
 depends_on:
 - build-reva
