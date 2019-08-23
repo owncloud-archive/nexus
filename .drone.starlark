@@ -8,7 +8,8 @@ def pipeline_build():
         },
         'commands': [
             'pwd',
-            'git clone git@github.com:owncloud/reva.git src/',
+            'ls -l',
+            'git clone https://github.com/cs3org/reva/ src/',
             # 'go get -u golang.org/x/lint/golint',
             # 'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
             # 'go get -u golang.org/x/tools/cmd/goimports',
