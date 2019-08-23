@@ -1,0 +1,47 @@
+---
+kind: pipeline
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: golang:1.12
+  commands:
+  - go get -u golang.org/x/lint/golint
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go get -u golang.org/x/tools/cmd/goimports
+  - go mod tidy
+  - "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o release/revad"
+  environment:
+    CGO_ENABLED: 0
+    GO111MODULE: on
+
+- name: executable
+  image: golang:1.12
+  commands:
+  - ./release/revad --help
+
+- name: checksum
+  image: alpine
+  commands:
+  - apk add --no-cache coreutils
+  - "sha256sum -b release/* > release/sha256sum.txt"
+
+- name: publish
+  pull: always
+  image: plugins/github-release
+  settings:
+    api_key:
+      from_secret: github_token
+    files:
+    - "release/*"
+    overwrite: true
+    title: "${DRONE_TAG}"
+  when:
+    ref:
+    - "refs/tags/**"
+
+...
