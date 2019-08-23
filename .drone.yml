@@ -32,33 +32,15 @@ steps:
   commands:
   - apk add --no-cache coreutils
   - "sha256sum -b ./build/reva/release/* > ./build/reva/release/sha256sum.txt"
-  - ls -l ./build/reva/release/
 
----
-kind: pipeline
-name: publish-reva
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
 - name: publish-release
   image: plugins/github-release
   settings:
     api_key:
       from_secret: github_token
     files:
-    - build/reva/release/revad
-    - build/reva/release/sha256sum.txt
+    - "./build/reva/release/*"
     overwrite: true
     title: "${DRONE_TAG}"
-
-trigger:
-  ref:
-  - "refs/tags/**"
-
-depends_on:
-- build-reva
 
 ...
