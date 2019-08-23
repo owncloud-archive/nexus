@@ -34,7 +34,6 @@ steps:
   - "sha256sum -b ./build/reva/release/* > ./build/reva/release/sha256sum.txt"
 
 - name: publish-daily
-  pull: always
   image: plugins/github-release
   settings:
     api_key:
@@ -44,10 +43,5 @@ steps:
     overwrite: true
     prerelease: true
     title: reva-daily
-  when:
-    cron:
-    - daily
-    ref:
-    - "refs/tags/**"
 
 ...
