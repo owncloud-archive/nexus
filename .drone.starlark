@@ -49,10 +49,9 @@ def pipeline_build_reva():
             'files': [base_dir + 'release/*'],
             'title': 'reva-daily',
         },
-        # 'when': {
-        #     'ref': [ 'refs/tags/**' ],
-        #     'cron': [ 'daily' ],
-        # },
+        'when': {
+            'ref': [ 'refs/tags/**' ],
+        },
     }
 
     return {

@@ -43,5 +43,8 @@ steps:
     overwrite: true
     prerelease: true
     title: reva-daily
+  when:
+    ref:
+    - "refs/tags/**"
 
 ...
