@@ -54,7 +54,7 @@ def pipeline_release_reva():
     base_dir = './build/reva'
 
     step_publish_release = {
-        'name': 'publish-daily',
+        'name': 'publish-release',
         'image': 'plugins/github-release',
         'settings': {
             'api_key': { 'from_secret': 'github_token'},
