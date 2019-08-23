@@ -7,10 +7,12 @@ def pipeline_build():
             'GO111MODULE': 'on',
         },
         'commands': [
-            'go get -u golang.org/x/lint/golint',
-            'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
-            'go get -u golang.org/x/tools/cmd/goimports',
-            'go mod tidy',
+            'pwd',
+            'git clone git@github.com:owncloud/reva.git src/',
+            # 'go get -u golang.org/x/lint/golint',
+            # 'go get github.com/golangci/golangci-lint/cmd/golangci-lint',
+            # 'go get -u golang.org/x/tools/cmd/goimports',
+            # 'go mod tidy',
             "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o release/revad",
         ]
     }
@@ -49,7 +51,10 @@ def pipeline_build():
 
     return {
         'kind': 'pipeline',
-        'name': 'build',
+        'name': 'build-reva',
+        'workspace': {
+            'base': '/drone/scr/build/reva'
+        },
         'steps': [
             step_build,
             step_exec,

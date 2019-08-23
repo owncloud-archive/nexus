@@ -1,19 +1,20 @@
 ---
 kind: pipeline
-name: build
+name: build-reva
 
 platform:
   os: linux
   arch: amd64
 
+workspace:
+  base: /drone/scr/build/reva
+
 steps:
 - name: build
   image: golang:1.12
   commands:
-  - go get -u golang.org/x/lint/golint
-  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-  - go get -u golang.org/x/tools/cmd/goimports
-  - go mod tidy
+  - pwd
+  - "git clone git@github.com:owncloud/reva.git src/"
   - "go build -o ./cmd/revad/revad -ldflags '-X main.build=${DRONE_BUILD_NUMBER}' -a -o release/revad"
   environment:
     CGO_ENABLED: 0
