@@ -32,6 +32,7 @@ steps:
   commands:
   - apk add --no-cache coreutils
   - "sha256sum -b ./build/reva/release/* > ./build/reva/release/sha256sum.txt"
+  - ls -l ./build/reva/release/
 
 ---
 kind: pipeline
