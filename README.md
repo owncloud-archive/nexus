@@ -8,7 +8,7 @@
 > - [**What is nexus? And where did it come from?**](https://central.owncloud.org/t/what-is-nexus-and-where-did-it-come-from/19270)
 > - [Interesting problems that need to be solved](https://central.owncloud.org/t/interesting-problems-that-need-to-be-solved/19154)
 > 
-> The recommended way to get started with OCIS development is currently to run reva and phoenix locally, which is now possible. If you are interested in large scale deployments the nexis makefile in this repo is still the best starting point.
+> The recommended way to get started with OCIS development is currently to run reva and phoenix locally, which is now possible. If you are interested in large scale deployments the nexis makefile in this repo may still be the best starting point. We are shifting towards https://github.com/owncloud/ocis though. See you there!
 > 
 > Cheers
 > 
